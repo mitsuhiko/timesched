@@ -20,6 +20,7 @@ compress: lib/generated/data.js
 
 download-timezone-info:
 	wget https://raw.github.com/moment/moment-timezone/develop/moment-timezone.json -O data/timezones.json
+	wget http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml -O data/windows_zones.xml
 
 lib/generated/data.js: data/*.json
 	python data/convert.py

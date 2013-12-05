@@ -1,4 +1,4 @@
-'use struct';
+'use strict';
 
 /* global moment */
 
@@ -42,7 +42,18 @@ var timesched = angular
     SELECTABLES_BY_KEY = {};
 
     for (var i = 0; i < data.selectables.length; i++) {
+      var zone;
       var sel = data.selectables[i];
+      var s = sel.d.toLowerCase().replace(/[^\s\w]/g, '');
+      if (sel.t == 'T') {
+        try {
+          zone = moment.tz(sel.z).format('z');
+        } catch (e) {
+          continue;
+        }
+        s += ' ' + zone;
+      }
+      sel.tokens = s.split(/\s+/g);
       SELECTABLES.push(sel);
       SELECTABLES_BY_NAME[sel.d.toLowerCase()] = sel;
       SELECTABLES_BY_KEY[sel.k] = sel;

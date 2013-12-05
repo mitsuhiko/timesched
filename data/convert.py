@@ -1,6 +1,7 @@
 import os
 import math
 import json
+from xml.etree import cElementTree as et
 
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
@@ -65,7 +66,17 @@ def convert_cities():
     return cities
 
 
-def combine_data(countries, cities, timezone_data):
+def find_windows_zones():
+    tree = et.parse('windows_zones.xml')
+    rv = {}
+    for map_zone in tree.findall(
+            './/windowsZones/mapTimezones/mapZone'):
+        if map_zone.attrib.get('territory') == '001':
+            rv[map_zone.attrib['other']] = map_zone.attrib['type'].split(None)[0]
+    return rv
+
+
+def combine_data(countries, cities, timezone_data, windows_zones):
     selectables = []
     timezones_found = set()
 
@@ -108,10 +119,21 @@ def combine_data(countries, cities, timezone_data):
             .replace('\'', '')
         record_selectable(key, name.split('/', 1)[-1], name, 'T', name)
 
+    for name, tzname in windows_zones.iteritems():
+        key = '-'.join(name.lower().split(None)) \
+            .replace('(', '') \
+            .replace(')', '') \
+            .replace(',', '')
+        record_selectable(key, name, name, 'T', tzname, {
+            'common_tz': True
+        })
+
     def _sort_key(x):
         city = x['sortinfo'].get('city')
         name = x['n'].lower()
         importance = 0
+        if x['sortinfo'].get('common_tz'):
+            importance += 5
         if city:
             if city['is_capital']:
                 importance += 1
@@ -140,9 +162,10 @@ def write_combined_data(data, f):
 def main():
     countries = convert_countries()
     cities = convert_cities()
+    windows_zones = find_windows_zones()
     with open('timezones.json') as f:
         timezones = json.load(f)
-    combined = combine_data(countries, cities, timezones)
+    combined = combine_data(countries, cities, timezones, windows_zones)
     with open('../lib/generated/data.js', 'w') as f:
         write_combined_data(combined, f)
 
