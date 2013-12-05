@@ -112,7 +112,7 @@ var timesched = angular
     $scope.homeZone = null;
     $scope.currentZone = null;
     $scope.ready = false;
-    $scope.timeRange = [10, 30];
+    $scope.timeRange = [40, 68];
     $scope.scheduleMeeting = false;
     $scope.meetingSummary = '';
 
