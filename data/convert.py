@@ -152,11 +152,11 @@ def combine_data(countries, cities, timezone_data, windows_zones):
 
 def write_combined_data(data, f):
     f.write('moment.tz.add(%s);\n' %
-            json.dumps(data['timezones'], indent=2))
+            json.dumps(data['timezones']))
     f.write('timesched.setTimezoneData(%s);\n' % json.dumps({
         'selectables': data['selectables'],
         'countries': data['countries'],
-    }, indent=2))
+    }))
 
 
 def main():
