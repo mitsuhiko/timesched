@@ -90,7 +90,7 @@ form.navbar-date-form > div > input {
 .time-list > ul > li div.handle {
     width: 6px!important;
     background: #ccc;
-    height: 40px;
+    height: 42px;
     cursor: pointer;
 }
 
@@ -183,6 +183,7 @@ form.navbar-date-form > div > input {
     background: #eee;
     display: block;
     cursor: pointer;
+    height: 42px;
 }
 
 .time-list > ul > li div.time-cells table td span.night {
@@ -203,16 +204,24 @@ form.navbar-date-form > div > input {
 
 .time-list > ul > li div.time-cells table td span.hour {
     font-weight: 600;
-    font-size: 1.2em;
+    font-size: 17px;
     display: block;
 }
 
 .time-list > ul > li div.time-cells table td span.minute {
     display: block;
-    font-size: 0.85em;
+    font-size: 12px;
 }
 
 .time-list > ul > li div.time-cells table td span.sep {
+    display: none;
+}
+
+.time-list > ul > li div.time-cells table .even span.hour {
+    padding-top: 8px;
+}
+
+.time-list > ul > li div.time-cells table .even span.minute {
     display: none;
 }
 

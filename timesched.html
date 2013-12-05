@@ -81,7 +81,8 @@
                     night: cell.hour >= 22 || cell.hour < 6,
                     morning: cell.hour >= 6 && cell.hour < 8,
                     day: cell.hour >= 8 && cell.hour < 18,
-                    evening: cell.hour >= 18 && cell.hour < 22
+                    evening: cell.hour >= 18 && cell.hour < 22,
+                    even: cell.minute == 0
                     }" tooltip-placement="bottom" tooltip="{{ cell.tooltip }}">
                     <span class="hour">{{ cell.hourFormat }}</span><span class="sep"
                       >:</span><span class="minute">{{ cell.minuteFormat }}</span>
