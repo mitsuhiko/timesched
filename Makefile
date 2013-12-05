@@ -24,5 +24,13 @@ download-timezone-info:
 lib/generated/data.js: data/*.json
 	python data/convert.py
 
+upload:
+	rm -rf _deploy
+	mkdir _deploy
+	cp timesched.html _deploy/index.html
+	cp -R lib _deploy
+	cp -R static _deploy
+	rsync -a _deploy/ pocoo.org:/var/www/timesched.pocoo.org/
+	rm -rf _deploy
 
-.PHONY: compress download-timezone-info
+.PHONY: compress download-timezone-info upload
