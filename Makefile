@@ -14,6 +14,9 @@ compress: lib/generated/data.js
 		lib/moment-timezone.js \
 		lib/typeahead.js \
 			-c > lib/generated/compressed.js
+	uglifyjs \
+		lib/generated/data.js \
+		-c > lib/generated/data-compressed.js
 
 download-timezone-info:
 	wget https://raw.github.com/moment/moment-timezone/develop/moment-timezone.json -O data/timezones.json
