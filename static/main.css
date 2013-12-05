@@ -120,16 +120,16 @@ form.navbar-date-form > div > input {
     font-weight: 600;
 }
 
-.time-list > ul > li div.location-info div.dropdown {
-    margin: 0;
-    font-size: 0.85em;
-    font-weight: 600;
-}
-
-.time-list > ul > li div.location-info div.dropdown em {
+.time-list .tt-suggestion em {
     font-weight: 300;
     font-style: normal;
-    color: #888;
+    color: red!important;
+}
+
+.time-list .tt-suggestion small {
+    font-weight: 300;
+    font-style: italic;
+    color: #888!important;
 }
 
 .time-list > ul > li div.clock {

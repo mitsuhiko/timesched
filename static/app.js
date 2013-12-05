@@ -42,16 +42,18 @@ var timesched = angular
     SELECTABLES_BY_KEY = {};
 
     for (var i = 0; i < data.selectables.length; i++) {
-      var zone;
       var sel = data.selectables[i];
       var s = sel.d.toLowerCase().replace(/[^\s\w]/g, '');
       if (sel.t == 'T') {
         try {
-          zone = moment.tz(sel.z).format('z');
+          var zones = moment.tz(sel.z)._z.zones;
+          for (var j = 0; j < zones.length; j++) {
+            if (zones[j].letters !== '%s')
+              s += ' ' + zones[j].letters.replace(/[^\s\w]/g, ' ');
+          }
         } catch (e) {
           continue;
         }
-        s += ' ' + zone;
       }
       sel.tokens = s.split(/\s+/g);
       SELECTABLES.push(sel);
@@ -372,13 +374,14 @@ var timesched = angular
           engine: {compile: function() {
             return {
               render: function(context) {
-                var time;
+                // TODO: escape just in case.
+                var rv = '<p>' + context.d;
                 try {
-                  time = moment.tz(context.z).format('HH:mm');
-                } catch (e) {
-                  time = '??:??';
-                }
-                return '<p>' + context.d + '\u00a0<em>' + time + '</em></p>';
+                  var now = moment.tz(context.z);
+                  rv += '\u00a0<em>' + now.format('HH:mm') + '</em>';
+                  rv += '\u00a0<small>' + now.format('z') + '</small>';
+                } catch (e) {}
+                return rv;
               }
             };
           }},

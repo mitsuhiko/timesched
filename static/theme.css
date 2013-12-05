@@ -191,6 +191,13 @@ a:focus {
 }
 
 .tt-suggestion em {
+    font-style: normal;
+    color: #388F58;
+    padding-left: 4px;
+}
+
+.tt-suggestion small {
+    font-style: italic;
     color: #888;
 }
 
