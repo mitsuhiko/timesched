@@ -107,7 +107,7 @@ var timesched = angular
 
   timesched.controller('TimezoneCtrl', function($scope, $location, datepickerConfig) {
     $scope.day = new Date();
-    $scope.isToday = false;
+    $scope.isToday = true;
     $scope.zones = [];
     $scope.homeZone = null;
     $scope.currentZone = null;
