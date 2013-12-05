@@ -118,7 +118,8 @@ var timesched = angular
     return this.clockHour !== oldH || this.clockMinute !== oldM;
   };
 
-  timesched.controller('TimezoneCtrl', function($scope, $location, datepickerConfig) {
+  timesched.controller('TimezoneCtrl', function($scope, $location,
+                                                datepickerConfig, $element) {
     $scope.day = new Date();
     $scope.isToday = true;
     $scope.zones = [];
@@ -224,12 +225,23 @@ var timesched = angular
     });
 
     $scope.$watch('timeRange', function() {
+      $scope.syncSlider();
       $scope.saveState();
     });
 
     $scope.$watchCollection('zones', function() {
+      $scope.syncSlider();
       $scope.saveState();
     });
+
+    $scope.syncSlider = function() {
+      if (!$scope.scheduleMeeting)
+        return;
+
+      $('.ui-slider-range', $element).css({
+        height: (32 + $scope.zones.length * 54) + 'px'
+      });
+    };
 
     $scope.saveState = function() {
       if (!$scope.ready)

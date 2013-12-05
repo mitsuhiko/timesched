@@ -61,9 +61,16 @@ form.navbar-date-form > div > input {
 }
 
 .range-selection .ui-slider {
-    margin: 0 10px 0 0;
-    width: 604px;
+    margin: 0 4px 0 0;
+    width: 624px;
     float: right;
+}
+
+.range-selection .ui-slider-range {
+    pointer-events: none;
+    top: auto;
+    bottom: 0;
+    background: rgba(56, 143, 88, 0.2);
 }
 
 .meeting-info {
@@ -95,10 +102,14 @@ form.navbar-date-form > div > input {
 }
 
 .time-list > ul > li div.location-info {
-    width: 200px!important;
     padding: 0 8px 0 8px;
     display: table-cell;
     vertical-align: top;
+}
+
+.time-list > ul > li div.location-info .dropdown > a {
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .time-list > ul > li div.location-info h3 {
@@ -120,22 +131,10 @@ form.navbar-date-form > div > input {
     font-weight: 600;
 }
 
-.time-list .tt-suggestion em {
-    font-weight: 300;
-    font-style: normal;
-    color: red!important;
-}
-
-.time-list .tt-suggestion small {
-    font-weight: 300;
-    font-style: italic;
-    color: #888!important;
-}
-
 .time-list > ul > li div.clock {
-    width: 100px!important;
+    width: 66px!important;
     text-align: right;
-    padding-right: 12px;
+    padding: 0;
     display: table-cell;
     vertical-align: middle;
     font-size: 20px;
@@ -145,7 +144,7 @@ form.navbar-date-form > div > input {
     font-weight: 600;
     display: inline-block;
     text-align: right;
-    width: 35px;
+    width: 30px;
 }
 
 .time-list > ul > li div.clock span.sep {
@@ -159,15 +158,15 @@ form.navbar-date-form > div > input {
     font-weight: 300;
     display: inline-block;
     text-align: left;
-    width: 35px;
+    width: 30px;
 }
 
 .time-list > ul > li div.time-cells {
     display: table-cell;
+    width: 600px;
 }
 
 .time-list > ul > li div.time-cells table {
-    width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
     table-layout: fixed;
@@ -175,8 +174,10 @@ form.navbar-date-form > div > input {
 
 .time-list > ul > li div.time-cells table td {
     text-align: center;
-    padding: 0 1px;
-    width: 100%;
+    padding: 0 1px!important;
+    margin: 0!important;
+    border: 0!important;
+    width: 24px!important;
 }
 
 .time-list > ul > li div.time-cells table td span.cell-wrapper {
@@ -184,6 +185,9 @@ form.navbar-date-form > div > input {
     display: block;
     cursor: pointer;
     height: 42px;
+    width: 24px!important;
+    margin: 0!important;
+    padding: 0!important;
 }
 
 .time-list > ul > li div.time-cells table td span.night {
