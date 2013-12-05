@@ -82,7 +82,7 @@ var timesched = angular
     this.timezoneOffsetInfo = ptr.format('[UTC] Z');
     this.utcOffset = ptr.zone();
     this.timezoneAbbr = ptr.format('z');
-    this.isHome = homeZone && homeZone.tz === this.tz;
+    this.isHome = homeZone && homeZone.urlKey === this.urlKey;
 
     this.timeCells = [];
     for (var i = 0; i < 24; i++) {
