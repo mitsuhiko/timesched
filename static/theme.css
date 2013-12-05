@@ -1,0 +1,213 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic);
+
+body {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+a {
+    color: #388F58;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: #2A7546;
+    text-decoration: underline;
+}
+
+.navbar {
+    border: none;
+    border-radius: 0;
+    background: #388F58;
+}
+
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: white;
+    background-color: transparent;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    color: white;
+    background-color: #2A7546;
+}
+
+.navbar-default .navbar-nav > .dropdown > a .caret,
+.navbar-default .navbar-nav > .dropdown > a:hover .caret,
+.navbar-default .navbar-nav > .dropdown > a:focus .caret,
+.navbar-default .navbar-nav > .open > a .caret,
+.navbar-default .navbar-nav > .open > a:hover .caret,
+.navbar-default .navbar-nav > .open > a:focus .caret {
+    border-top-color: white;
+    border-bottom-color: white;
+}
+
+.navbar-default .navbar-text {
+    color: white;
+}
+
+.form-control, .btn {
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #2A7546;
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active {
+    color: #333333;
+    background-color: #ebebeb;
+    border: 1px solid #2A7546;
+}
+
+.btn-default.disabled,
+.btn-default[disabled] {
+    border-color: #2A7546;
+}
+
+.form-control:focus {
+    border: 1px solid #338250;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(152, 217, 176, 0.6);
+}
+
+.dropdown-menu {
+    border-radius: 0;
+}
+
+.nav-pills > li > a {
+    border-radius: 0;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    color: #ffffff;
+    background-color: #388F58;
+}
+
+.tooltip {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.tooltip-inner {
+    background-color: #388F58;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #388F58;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #388F58;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: #388F58;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: #388F58;
+}
+
+.datepicker-dialog .btn {
+    border-color: #ddd;
+    background-color: #eee;
+}
+
+.datepicker-dialog .btn-info {
+    background-color: #388F58;
+    color: white;
+    font-weight: 600;
+}
+
+.ui-slider {
+    margin: 5px -5px 5px -5px;
+    padding: 0 5px;
+    height: 10px;
+    background: #eee;
+    position: relative;
+}
+
+.ui-slider-range {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 1;
+    display: block;
+    background-color: #ccc;
+}
+
+.ui-slider-handle {
+    position: absolute;
+    height: 20px;
+    width: 10px;
+    margin: -5px 0 0 -5px;
+    background-color: #388F58;
+    z-index: 2;
+    display: block;
+}
+
+/* typeahead */
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+    margin-bottom: 0;
+}
+
+.tt-dropdown-menu {
+    min-width: 160px;
+    margin-top: 2px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    display: block;
+    padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+    background-color: #ddd;
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+    color: #fff;
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
+.tt-suggestion em {
+    color: #888;
+}
+
+.twitter-typeahead {
+    display: block !important;
+}
+
+.tt-query {
+    color black;
+}
+
+.tt-hint {
+    margin-top: 1px;
+    margin-left: 1px;
+    height: 32px;
+    padding: 6px 10px;
+    font-size: 14px;
+    color: white;
+    background-color: transparent;
+}

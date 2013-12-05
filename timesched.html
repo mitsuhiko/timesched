@@ -1,0 +1,151 @@
+<!doctype html>
+<html ng-app="timesched">
+<title>Time Scheduler</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" href="static/main.css">
+<link rel="stylesheet" href="static/theme.css">
+
+<div class="container" ng-controller="TimezoneCtrl">
+  <div class="header">
+    <ul class="nav nav-pills pull-right">
+      <li><a href="http://github.com/mitsuhiko/timeshed">Sourcecode</a></li>
+      <li class="active"><a href="#">Scheduler</a></li>
+    </ul>
+    <h1 class="text-muted">Time Scheduler</h1>
+  </div>
+
+  <div class="contentwrapper" hidden>
+    <div class="navbar navbar-default navbar-actions" role="navigation">
+      <div class="navbar-collapse collapse">
+        <form class="navbar-form navbar-left navbar-timezone-form"
+            name="zoneform" ng-submit="addInputZone()">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Add timezone"
+              ng-model="currentZone" timezone>
+          </div>
+          <button type="submit" class="btn btn-default"
+            ng-disabled="!currentZone || zoneform.$invalid">Add</button>
+        </form>
+        <form class="navbar-form navbar-left navbar-date-form">
+          <div class="form-group">
+            <input type="text" class="form-control"
+              datepicker-popup="yyyy-MM-dd" ng-model="day" ng-required="true">
+          </div>
+        </form>
+        <p class="navbar-text navbar-warning-text" ng-show="!isToday">
+          <strong>Reminder:</strong>
+          you're not scheduling for today
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a ng-click="sortByOffset()">Sort by offset</a></li>
+              <li><a ng-click="sortByName()">Sort by name</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="time-list">
+      <ul ui-sortable="{axis: 'y', handle: 'div.handle', cursor: 'row-resize'}" ng-model="zones">
+        <li ng-repeat="zone in zones" ng-class="{home: zone.isHome}">
+          <div class="handle"></div>
+          <div class="location-info">
+            <h3>{{ zone.homeOffset }} <em
+                tooltip-placement="right"
+                tooltip="{{ zone.timezoneOffsetInfo }}, {{ zone.timezoneName }}">{{ zone.timezoneAbbr }}</em></h3>
+            <div class="dropdown">
+              <a href="#" data-toggle="dropdown">{{ zone.timezoneShortName }}</a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a ng-click="setAsHome(zone)" ng-hide="zone.isHome">Set as home</a>
+                <li><a ng-click="removeZone(zone)">Remove</a>
+              </ul>
+            </div>
+          </div>
+          <div class="clock">
+            <div class="clockwrapper" ng-show="isToday">
+              <span class="hour">{{ zone.clockHour }}</span><!--
+           --><span class="sep">:</span><!--
+           --><span class="minute">{{ zone.clockMinute }}</span>
+            </div>
+          </div>
+          <div class="time-cells">
+            <table>
+              <tr>
+                <td ng-repeat="cell in zone.timeCells">
+                  <span class="cell-wrapper" ng-class="{
+                    daystart: cell.hour == 0,
+                    night: cell.hour >= 22 || cell.hour < 6,
+                    morning: cell.hour >= 6 && cell.hour < 8,
+                    day: cell.hour >= 8 && cell.hour < 18,
+                    evening: cell.hour >= 18 && cell.hour < 22
+                    }" tooltip-placement="bottom" tooltip="{{ cell.tooltip }}">
+                    <span class="hour">{{ cell.hourFormat }}</span><span class="sep"
+                      >:</span><span class="minute">{{ cell.minuteFormat }}</span>
+                  </span>
+            </table>
+          </div>
+        </li>
+      </ul>
+      <div class="range-selection">
+        <div class="action"><input type="checkbox" id="meeting" ng-model="scheduleMeeting">
+          <label for="meeting">Schedule a meeting</label></div>
+        <div ui-slider="{range: true}" min="0" max="95" ng-model="timeRange"
+          ng-show="scheduleMeeting"></div>
+        <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading">
+    <p>Loading timezones …
+  </div>
+
+  <div class="footer">
+    <p>&copy; Copyright 2013 by Armin Ronacher. Proudly BSD licensed.</p>
+  </div>
+</div>
+
+<script id="template/datepicker/datepicker.html" type="text/ng-template">
+  <table>
+    <thead>
+      <tr class="text-center">
+        <th><button type="button" class="btn pull-left"
+          ng-click="move(-1)"><i class="glyphicon glyphicon-chevron-left"></i></button></th>
+        <th colspan="{{ rows[0].length - 2 + showWeekNumbers }}"><button type="button" class="btn btn-block" ng-click="toggleMode()"><strong>{{ title }}</strong></button></th>
+        <th><button type="button" class="btn pull-right" ng-click="move(1)"><i class="glyphicon glyphicon-chevron-right"></i></button></th>
+      </tr>
+      <tr class="text-center" ng-show="labels.length > 0">
+        <th ng-show="showWeekNumbers">#</th>
+        <th ng-repeat="label in labels">{{ label }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in rows">
+        <td ng-show="showWeekNumbers" class="text-center"><em>{{ getWeekNumber(row) }}</em></td>
+        <td ng-repeat="dt in row" class="text-center">
+          <button type="button" style="width:100%;" class="btn" ng-class="{'btn-info': dt.selected}" ng-click="select(dt.date)" ng-disabled="dt.disabled"><span ng-class="{muted: dt.secondary}">{{ dt.label }}</span></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</script>
+
+<script id="template/datepicker/popup.html" type="text/ng-template">
+  <ul class="dropdown-menu datepicker-dialog" ng-style="{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}">
+    <li ng-transclude></li>
+    <li ng-show="true" style="padding:10px 9px 2px">
+      <span class="btn-group">
+        <button type="button" class="btn btn-small btn-inverse" ng-click="today()">{{ currentText }}</button>
+      </span>
+    </li>
+  </ul>
+</script>
+
+<script src="lib/generated/compressed.js"></script>
+<script src="static/app.js"></script>
+<script src="lib/generated/compressed-data.js"></script>
+</html>

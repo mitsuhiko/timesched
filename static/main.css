@@ -1,0 +1,240 @@
+/* overall */
+body {
+    margin: 0;
+    padding: 30px 20px;
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* header */
+div.header h1 {
+    font-size: 3em;
+    color: black;
+}
+
+/* footer */
+div.footer {
+    margin-top: 15px;
+    color: #888;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+/* navbar */
+div.navbar-actions {
+    margin: 25px 0;
+}
+
+form.navbar-timezone-form {
+    padding: 0;
+}
+
+form.navbar-date-form {
+    padding: 0 0 0 4px;
+}
+
+form.navbar-date-form > div > input {
+    width: 110px;
+    text-align: center;
+}
+
+.navbar-warning-text {
+    font-size: 13px;
+    color: #D3F2DF;
+}
+
+/* time selection */
+.range-selection {
+    margin: 15px 0;
+    padding: 0 0 10px 0;
+}
+
+.range-selection > .action {
+    float: left;
+    margin: 0;
+    padding: 0;
+    height: 35px;
+}
+
+.range-selection .ui-slider {
+    margin: 0 10px 0 0;
+    width: 604px;
+    float: right;
+}
+
+.meeting-info {
+    clear: both;
+    font-size: 13px;
+    margin: 0 10px;
+    font-size: 12px;
+}
+
+/* time list */
+.time-list > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.time-list > ul > li {
+    padding: 4px;
+    display: table;
+    width: 100%;
+    background: white;
+}
+
+.time-list > ul > li div.handle {
+    width: 6px!important;
+    background: #ccc;
+    height: 40px;
+    cursor: pointer;
+}
+
+.time-list > ul > li div.location-info {
+    width: 200px!important;
+    padding: 0 8px 0 8px;
+    display: table-cell;
+    vertical-align: top;
+}
+
+.time-list > ul > li div.location-info h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.time-list > ul > li div.location-info h3 em {
+    font-size: 12px;
+    font-weight: 400;
+    color: #888;
+}
+
+.time-list > ul > li.home {
+    background: #f7f7f7;
+}
+
+.time-list > ul > li.home div.location-info h3 {
+    font-weight: 600;
+}
+
+.time-list > ul > li div.location-info div.dropdown {
+    margin: 0;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.time-list > ul > li div.location-info div.dropdown em {
+    font-weight: 300;
+    font-style: normal;
+    color: #888;
+}
+
+.time-list > ul > li div.clock {
+    width: 100px!important;
+    text-align: right;
+    padding-right: 12px;
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+.time-list > ul > li div.clock span.hour {
+    font-weight: 600;
+    display: inline-block;
+    text-align: right;
+    width: 35px;
+}
+
+.time-list > ul > li div.clock span.sep {
+    font-weight: 300;
+    color: #888;
+    display: inline-block;
+    text-align: center;
+}
+
+.time-list > ul > li div.clock span.minute {
+    font-weight: 300;
+    display: inline-block;
+    text-align: left;
+    width: 35px;
+}
+
+.time-list > ul > li div.time-cells {
+    display: table-cell;
+}
+
+.time-list > ul > li div.time-cells table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.time-list > ul > li div.time-cells table td {
+    text-align: center;
+    padding: 0 1px;
+    width: 100%;
+}
+
+.time-list > ul > li div.time-cells table td span.cell-wrapper {
+    background: #eee;
+    display: block;
+    cursor: pointer;
+}
+
+.time-list > ul > li div.time-cells table td span.night {
+    background: #666;
+    color: white;
+}
+
+.time-list > ul > li div.time-cells table td span.morning,
+.time-list > ul > li div.time-cells table td span.evening {
+    background: #999;
+    color: white;
+}
+
+.time-list > ul > li div.time-cells table td span.daystart {
+    background: #333;
+    color: white;
+}
+
+.time-list > ul > li div.time-cells table td span.hour {
+    font-weight: 600;
+    font-size: 1.2em;
+    display: block;
+}
+
+.time-list > ul > li div.time-cells table td span.minute {
+    display: block;
+    font-size: 0.85em;
+}
+
+.time-list > ul > li div.time-cells table td span.sep {
+    display: none;
+}
+
+.loading p {
+    margin: 25px 0;
+    font-size: 18px;
+}
+
+/* fixes */
+ul.dropdown-menu a {
+    cursor: pointer!important;
+}
+
+.tooltip-inner {
+    max-width: 300px;
+}
+
+.datepicker-dialog {
+    padding: 10px;
+}
+
+.datepicker-dialog table tr th {
+    text-align: center;
+    padding-top: 7px;
+}
