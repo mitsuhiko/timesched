@@ -1,5 +1,4 @@
 import os
-import sys
 import math
 import json
 
@@ -70,11 +69,11 @@ def combine_data(countries, cities, timezone_data):
     selectables = []
     timezones_found = set()
 
-    def record_selectable(key, name, display_name, type, tz, sortinfo=None):
+    def record_selectable(key, name, full_name, type, tz, sortinfo=None):
         selectables.append({
             'k': key,
             'n': name,
-            'd': display_name,
+            'd': full_name,
             'z': tz,
             't': type,
             'sortinfo': sortinfo or {},
@@ -107,7 +106,7 @@ def combine_data(countries, cities, timezone_data):
             .replace('/', ':') \
             .replace(',', '') \
             .replace('\'', '')
-        record_selectable(key, name, name.split('/', 1)[-1], 'T', name)
+        record_selectable(key, name.split('/', 1)[-1], name, 'T', name)
 
     def _sort_key(x):
         city = x['sortinfo'].get('city')
