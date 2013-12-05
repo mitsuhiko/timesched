@@ -13,6 +13,19 @@ var timesched = angular
   var SELECTABLES_BY_NAME = {};
   var SELECTABLES_BY_KEY = {};
 
+  function uniq(tokens) {
+    var found = {};
+    var rv = [];
+    for (var i = 0; i < tokens.length; i++) {
+      var k = tokens[i];
+      if (found['::' + k] === undefined) {
+        rv.push(tokens[i]);
+        found['::' + k] = true;
+      }
+    }
+    return rv;
+  }
+
   function normalizeZoneName(zoneName) {
     return zoneName.toLowerCase().replace(/^\s+|\s+$/g, '');
   }
@@ -48,14 +61,16 @@ var timesched = angular
         try {
           var zones = moment.tz(sel.z)._z.zones;
           for (var j = 0; j < zones.length; j++) {
-            if (zones[j].letters !== '%s')
-              s += ' ' + zones[j].letters.replace(/[^\s\w]/g, ' ');
+            if (zones[j].letters === '%s')
+              continue;
+            s += ' ' + zones[j].letters.replace(/[^\s\w]/g, ' ');
+            s += ' ' + zones[j].letters;
           }
         } catch (e) {
           continue;
         }
       }
-      sel.tokens = s.split(/\s+/g);
+      sel.tokens = uniq(s.split(/\s+/g));
       SELECTABLES.push(sel);
       SELECTABLES_BY_NAME[sel.d.toLowerCase()] = sel;
       SELECTABLES_BY_KEY[sel.k] = sel;
@@ -68,6 +83,9 @@ var timesched = angular
     this.offset = 0;
     this.timezoneShortName = zone.n;
     this.timezoneName = zone.d;
+
+    this._cacheDay = null;
+    this._cacheTZ = null;
     this.update();
   }
 
@@ -76,6 +94,11 @@ var timesched = angular
     var start = moment.tz(day, reftz).startOf('day');
     var ptr = start.clone().tz(this.tz);
     var offset = (start.zone() - ptr.zone()) / 60;
+    var cacheDay = moment(day).format('YYYY-MM-DD');
+
+    if (cacheDay === this._cacheDay && reftz === this._cacheTZ) {
+      return;
+    }
 
     this.dayStart = ptr.clone();
     this.homeOffset = (offset > 0 ? '+' : '') + offset;
@@ -106,6 +129,8 @@ var timesched = angular
         this.timezoneOffsetInfo += '/' + endOffsetInfo;
     }
 
+    this._cacheDay = cacheDay;
+    this._cacheTZ = reftz;
     this.updateClock();
   };
 
@@ -375,8 +400,9 @@ var timesched = angular
       $('div.loading').hide();
       $('div.contentwrapper').fadeIn('slow', function() {
         window.setInterval(function() {
-          if ($scope.updateClocks())
+          if ($scope.updateClocks()) {
             $scope.$apply();
+          }
         }, 1000);
       });
     }, 100);

@@ -124,7 +124,7 @@ form.navbar-date-form > div > input {
 }
 
 .time-list > ul > li.home {
-    background: #f7f7f7;
+    background: linear-gradient(to bottom, #efefef 0%,#fafafa 100%);
 }
 
 .time-list > ul > li.home div.location-info h3 {
