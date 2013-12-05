@@ -14,7 +14,7 @@ var timesched = angular
   var SELECTABLES_BY_KEY = {};
 
   function normalizeZoneName(zoneName) {
-    return zoneName.toLowerCase();
+    return zoneName.toLowerCase().replace(/^\s+|\s+$/g, '');
   }
 
   function zoneExists(input) {
@@ -345,19 +345,16 @@ var timesched = angular
 
   timesched.directive('timezone', function() {
     return {
+      restrict: 'ACE',
       require: 'ngModel',
+      scope: {
+        datasets: '=',
+        ngModel: '='
+      },
       link: function(scope, elm, attrs, ctrl) {
-        ctrl.$parsers.unshift(function(viewValue) {
-          if (zoneExists(viewValue)) {
-            ctrl.$setValidity('timezone', true);
-            return viewValue;
-          } else {
-            ctrl.$setValidity('timezone', false);
-            return undefined;
-          }
-        });
+        var localChange = false;
 
-        $(elm).typeahead({
+        elm.typeahead({
           name: 'timezone',
           local: SELECTABLES,
           valueKey: 'd',
@@ -377,29 +374,45 @@ var timesched = angular
           template: 'dummy'
         });
 
-        
-        $(elm).on('change', function(event) {
-          if (attrs.ngModel) {
-            scope.ngModel = $(event.target).val();
-          }
-          scope.$apply();
+        function updateScope() {
+          var oldVal = elm.val();
+          scope.$apply(function() {
+            localChange = true;
+            scope.ngModel = elm.val();
+          });
+          elm.val(oldVal);
+        }
+
+        elm.on('typeahead:selected', function() {
+          ctrl.$setValidity('timezone', true);
+          updateScope();
+          elm.trigger('submit');
+        });
+        elm.on('typeahead:autocompleted', updateScope);
+
+        elm.bind('input', function() {
+          scope.$apply(function() {
+            var value = elm.val();
+            if (zoneExists(value)) {
+              localChange = true;
+              ctrl.$setValidity('timezone', true);
+              scope.ngModel = value;
+            } else {
+              ctrl.$setValidity('timezone', false);
+            }
+          });
         });
 
-        $(elm).on('typeahead:selected', function(event, datum) {
-          scope.selectedItem = datum.d;
-          if (attrs.ngModel) {
-            scope.ngModel = $(event.target).val();
+        scope.$watch('ngModel', function(newVal) {
+          if (localChange) {
+            localChange = false;
+            return;
           }
-          scope.$apply();
-        });
-
-        scope.$watch('selectedItem', function(newValue) {
-          if (newValue === '')
-            $(elm).typeahead('setQuery', '');
+          elm.typeahead('setQuery', newVal || '');
         }, true);
 
         scope.$on('$destroy', function() {
-          $(elm).typeahead('destroy');
+          elm.typeahead('destroy');
         });
       }
     };

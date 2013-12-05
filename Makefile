@@ -2,9 +2,9 @@ all: compress
 
 compress: lib/generated/data.js
 	uglifyjs \
-		lib/angular.js \
 		lib/jquery.js \
 		lib/jquery-ui.js \
+		lib/angular.js \
 		lib/bootstrap/js/bootstrap.js \
 		lib/sortable.js \
 		lib/slider.js \
