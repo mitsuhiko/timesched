@@ -119,7 +119,8 @@ var timesched = angular
   };
 
   timesched.controller('TimezoneCtrl', function($scope, $location,
-                                                datepickerConfig, $element) {
+                                                datepickerConfig, $element,
+                                                $timeout) {
     $scope.day = new Date();
     $scope.isToday = true;
     $scope.zones = [];
@@ -151,6 +152,19 @@ var timesched = angular
       $scope.homeZone = zone;
       $scope.updateZones();
       $scope.saveState();
+    };
+
+    $scope.goToToday = function() {
+      $timeout(function() {
+        // dismiss the timezone box
+        $('body').trigger('click');
+        if ($scope.homeZone === null) {
+          $scope.day = new Date();
+        } else {
+          $scope.day = new Date(moment.tz($scope.homeZone.tz).format('YYYY-MM-DD'));
+        }
+        $scope.$apply();
+      });
     };
 
     $scope.removeZone = function(zone) {
