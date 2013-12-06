@@ -75,7 +75,10 @@ form.navbar-date-form > div > input {
     pointer-events: none;
     top: auto;
     bottom: 0;
-    background: rgba(56, 143, 88, 0.2);
+    background: rgba(0, 0, 0, 0.1);
+    border-left: 2px solid #388F58;
+    border-right: 2px solid #388F58;
+    border-top: 2px solid #388F58;
 }
 
 .meeting-info {
@@ -202,7 +205,7 @@ form.navbar-date-form > div > input {
 
 .time-list > ul > li div.time-cells table td span.night {
     background: #666;
-    color: white;
+    color: white;0
 }
 
 .time-list > ul > li div.time-cells table td span.morning,
@@ -214,6 +217,23 @@ form.navbar-date-form > div > input {
 .time-list > ul > li div.time-cells table td span.daystart {
     background: #333;
     color: white;
+}
+
+.time-list > ul > li div.time-cells table td span.day.weekend {
+    background: #F2CECE;
+}
+
+.time-list > ul > li div.time-cells table td span.night.weekend {
+    background: #803232;
+}
+
+.time-list > ul > li div.time-cells table td span.morning.weekend,
+.time-list > ul > li div.time-cells table td span.evening.weekend {
+    background: #BA5B5B;
+}
+
+.time-list > ul > li div.time-cells table td span.daystart.weekend {
+    background: #360808;
 }
 
 .time-list > ul > li div.time-cells table td span.hour {

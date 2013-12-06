@@ -84,6 +84,18 @@ a:focus {
     border-radius: 0;
 }
 
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    background: #eee;
+    color: #222;
+}
+
+.dropdown-menu > .active > a {
+    background: inherit;
+    color: inherit;
+    font-weight: 600;
+}
+
 .nav-pills > li > a {
     border-radius: 0;
 }

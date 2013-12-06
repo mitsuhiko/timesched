@@ -45,6 +45,7 @@
               <li><a ng-click="sortByName()">Sort by name</a></li>
               <li><a ng-click="reverse()">Reverse list</a></li>
               <li><a ng-click="clearList()">Clear list</a></li>
+              <li ng-class="{active: markWeekends}"><a ng-click="toggleMarkWeekends()">Mark weekends</a>
             </ul>
           </li>
         </ul>
@@ -84,6 +85,7 @@
                     morning: cell.hour >= 6 && cell.hour < 8,
                     day: cell.hour >= 8 && cell.hour < 18,
                     evening: cell.hour >= 18 && cell.hour < 22,
+                    weekend: cell.isWeekend && markWeekends,
                     even: cell.minute == 0
                     }" tooltip-placement="bottom" tooltip="{{ cell.tooltip }}">
                     <span class="hour">{{ cell.hourFormat }}</span><span class="sep"

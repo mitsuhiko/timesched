@@ -14,6 +14,7 @@ var timesched = angular
   var MAIL_HEADER = '\n\n';
   var MAIL_FOOTER = '';
   var SELECTABLES = [];
+  var WEEKEND_INFO = {};
   var SELECTABLES_BY_NAME = {};
   var SELECTABLES_BY_KEY = {};
 
@@ -55,6 +56,7 @@ var timesched = angular
 
   timesched.setTimezoneData = function(data) {
     SELECTABLES = [];
+    WEEKEND_INFO = {};
     SELECTABLES_BY_NAME = {};
     SELECTABLES_BY_KEY = {};
 
@@ -79,7 +81,18 @@ var timesched = angular
       SELECTABLES_BY_NAME[sel.d.toLowerCase()] = sel;
       SELECTABLES_BY_KEY[sel.k] = sel;
     }
+    WEEKEND_INFO = data.weekends;
   };
+
+  function getWeekendInfo(country) {
+    var start = WEEKEND_INFO.start[country] || WEEKEND_INFO.start['001'];
+    var end = WEEKEND_INFO.end[country] || WEEKEND_INFO.end['001'];
+    return [start, end];
+  }
+
+  function isWeekend(info, day) {
+    return day >= info[0] || day % 6 <= info[1];
+  }
 
   function TimeZoneState(m, zone) {
     this.tz = m.tz();
@@ -87,6 +100,7 @@ var timesched = angular
     this.offset = 0;
     this.timezoneShortName = zone.n;
     this.timezoneName = zone.d;
+    this.weekendInfo = getWeekendInfo(zone.c || null);
 
     this._cacheDay = null;
     this._cacheTZ = null;
@@ -120,6 +134,7 @@ var timesched = angular
         hourFormat: ptr.format('H'),
         minute: parseInt(ptr.format('m'), 10),
         minuteFormat: ptr.format('mm'),
+        isWeekend: isWeekend(this.weekendInfo, ptr.day()),
         tooltip: ptr.format('LLLL (z)')
       });
     }
@@ -167,6 +182,7 @@ var timesched = angular
     $scope.timeRange = [600, 1020];
     $scope.scheduleMeeting = false;
     $scope.meetingSummary = '';
+    $scope.markWeekends = true;
 
     // make the datepicker show monday by default
     datepickerConfig.startingDay = 1;
@@ -188,6 +204,11 @@ var timesched = angular
     $scope.setAsHome = function(zone) {
       $scope.homeZone = zone;
       $scope.updateZones();
+      $scope.saveState();
+    };
+
+    $scope.toggleMarkWeekends = function() {
+      $scope.markWeekends = !$scope.markWeekends;
       $scope.saveState();
     };
 
@@ -330,9 +351,12 @@ var timesched = angular
         params.tz = buf.join(',');
       if ($scope.scheduleMeeting)
         params.range = $scope.timeRange[0] + ',' + $scope.timeRange[1];
+      if (!$scope.markWeekends)
+        params.weekends = '0';
       if (params.tz != $location.search.tz ||
           params.date != $location.search.date ||
-          params.range != $location.search.range) {
+          params.range != $location.search.range ||
+          params.weekends != $location.search.weekends) {
         $location.search(params);
         if (!doNotReplace)
           $location.replace();
@@ -436,6 +460,12 @@ var timesched = angular
         $scope.scheduleMeeting = true;
       } else {
         $scope.scheduleMeeting = false;
+      }
+
+      if (params.weekends == '0') {
+        $scope.markWeekends = false;
+      } else if (!params.weekends || params.weekends == '1') {
+        $scope.markWeekends = true;
       }
 
       if (dateChanged || $scope.zonesDifferInURL(allZones)) {

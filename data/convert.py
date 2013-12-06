@@ -76,19 +76,36 @@ def find_windows_zones():
     return rv
 
 
-def combine_data(countries, cities, timezone_data, windows_zones):
+def find_weekend_info():
+    day_to_int = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].index
+    tree = et.parse('supplemental_data.xml')
+    rv = {'start': {}, 'end': {}}
+    for info in tree.findall('.//weekendStart'):
+        for t in info.attrib['territories'].split():
+            rv['start'][t] = day_to_int(info.attrib['day'])
+    for info in tree.findall('.//weekendEnd'):
+        for t in info.attrib['territories'].split():
+            rv['end'][t] = day_to_int(info.attrib['day'])
+    return rv
+
+
+def combine_data(countries, cities, timezone_data, windows_zones, weekends):
     selectables = []
     timezones_found = set()
 
-    def record_selectable(key, name, full_name, type, tz, sortinfo=None):
-        selectables.append({
+    def record_selectable(key, name, full_name, type, tz,
+                          country=None, sortinfo=None):
+        rv = {
             'k': key,
             'n': name,
             'd': full_name,
             'z': tz,
             't': type,
             'sortinfo': sortinfo or {},
-        })
+        }
+        if country is not None:
+            rv['c'] = country
+        selectables.append(rv)
 
     for city in cities.itervalues():
         key = \
@@ -105,7 +122,8 @@ def combine_data(countries, cities, timezone_data, windows_zones):
             display_parts.append(city['state'])
         display_parts.append(city['name'])
         record_selectable(key, city['name'], ', '.join(display_parts),
-                          'C', city['timezone'], sortinfo={'city': city})
+                          'C', city['timezone'], city['country'],
+                          sortinfo={'city': city})
         timezones_found.add(city['timezone'])
 
     for name in timezone_data['meta']:
@@ -124,7 +142,7 @@ def combine_data(countries, cities, timezone_data, windows_zones):
             .replace('(', '') \
             .replace(')', '') \
             .replace(',', '')
-        record_selectable(key, name, name, 'T', tzname, {
+        record_selectable(key, name, name, 'T', tzname, sortinfo={
             'common_tz': True
         })
 
@@ -146,6 +164,7 @@ def combine_data(countries, cities, timezone_data, windows_zones):
     return {
         'timezones': timezone_data,
         'selectables': selectables,
+        'weekends': weekends,
         'countries': dict((k, v['name']) for k, v in countries.iteritems()),
     }
 
@@ -155,7 +174,7 @@ def write_combined_data(data, f):
             json.dumps(data['timezones']))
     f.write('timesched.setTimezoneData(%s);\n' % json.dumps({
         'selectables': data['selectables'],
-        'countries': data['countries'],
+        'weekends': data['weekends'],
     }))
 
 
@@ -163,9 +182,11 @@ def main():
     countries = convert_countries()
     cities = convert_cities()
     windows_zones = find_windows_zones()
+    weekends = find_weekend_info()
     with open('timezones.json') as f:
         timezones = json.load(f)
-    combined = combine_data(countries, cities, timezones, windows_zones)
+    combined = combine_data(countries, cities, timezones, windows_zones,
+                            weekends)
     with open('../lib/generated/data.js', 'w') as f:
         write_combined_data(combined, f)
 
