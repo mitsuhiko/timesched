@@ -74,6 +74,7 @@ form.navbar-date-form > div > input {
 .range-selection {
     margin: 15px 0;
     padding: 0 0 10px 0;
+    min-height: 40px;
 }
 
 .range-selection > .action {
@@ -298,4 +299,8 @@ ul.dropdown-menu a {
 .datepicker-dialog table tr th {
     text-align: center;
     padding-top: 7px;
+}
+
+.datepicker-dialog table tr span.muted {
+    color: #bbb;
 }
