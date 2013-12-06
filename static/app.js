@@ -54,6 +54,33 @@ var timesched = angular
     return m !== null ? new TimeZoneState(m, zone) : null;
   }
 
+  function getLocaleTimeZoneState() {
+    var tried = {};
+
+    var now = Date.now();
+    function makeKey(id) {
+      return [0, 4, 8, -5 * 12, 4 - 5 * 12, 8 - 5 * 12].map(function(months) {
+        var m = moment(now + months * 30 * 24 * 60 * 60 * 1000);
+        if (id)
+          m.tz(id);
+        return m.format('DDHH');
+      }).join(' ');
+    }
+
+    var thisKey = makeKey();
+
+    for (var key in SELECTABLES_BY_KEY) {
+      var sel = SELECTABLES_BY_KEY[key];
+      if (sel.t !== 'T' || !sel.C || tried[sel.z] !== undefined)
+        continue;
+      tried[sel.z] = true;
+      if (thisKey === makeKey(sel.z))
+        return lookupTimeZoneState(sel.k);
+    }
+
+    return null;
+  }
+
   timesched.setTimezoneData = function(data) {
     SELECTABLES = [];
     WEEKEND_INFO = {};
@@ -173,6 +200,7 @@ var timesched = angular
   timesched.controller('TimezoneCtrl', function($scope, $location,
                                                 datepickerConfig, $element,
                                                 $timeout) {
+    var skipSave = false;
     $scope.day = new Date();
     $scope.isToday = true;
     $scope.zones = [];
@@ -358,6 +386,10 @@ var timesched = angular
     $scope.saveState = function(doNotReplace) {
       if (!$scope.ready)
         return;
+      if (skipSave) {
+        skipSave = false;
+        return;
+      }
       var buf = [];
       for (var i = 0; i < $scope.zones.length; i++) {
         var zone = $scope.zones[i];
@@ -516,6 +548,19 @@ var timesched = angular
     window.setTimeout(function() {
       $scope.ready = true;
       $scope.syncWithURL();
+
+      // in case we did not find any zones try autodetection for
+      // the current one.  If that succeeds we do not want to save
+      // the state though, to keep the url clean.
+      if ($scope.zones.length === 0) {
+        var home = getLocaleTimeZoneState();
+        if (home !== null) {
+          skipSave = true;
+          $scope.addZone(home.urlKey);
+          $scope.$apply();
+        }
+      }
+
       $('div.loading').hide();
       $('div.contentwrapper').fadeIn('slow', function() {
         window.setInterval(function() {

@@ -94,7 +94,7 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
     timezones_found = set()
 
     def record_selectable(key, name, full_name, type, tz,
-                          country=None, sortinfo=None):
+                          country=None, common_tz=False, sortinfo=None):
         rv = {
             'k': key,
             'n': name,
@@ -105,6 +105,8 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
         }
         if country is not None:
             rv['c'] = country
+        if common_tz:
+            rv['C'] = True
         selectables.append(rv)
 
     for city in cities.itervalues():
@@ -142,9 +144,7 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
             .replace('(', '') \
             .replace(')', '') \
             .replace(',', '')
-        record_selectable(key, name, name, 'T', tzname, sortinfo={
-            'common_tz': True
-        })
+        record_selectable(key, name, name, 'T', tzname, common_tz=True)
 
     def _sort_key(x):
         city = x['sortinfo'].get('city')
