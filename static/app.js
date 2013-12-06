@@ -192,9 +192,12 @@ var timesched = angular
     var now = moment.tz(this.tz);
     var oldH = this.clockHour;
     var oldM = this.clockMinute;
+    var oldD = this.clockDay;
     this.clockHour = now.format('H');
     this.clockMinute = now.format('mm');
-    return this.clockHour !== oldH || this.clockMinute !== oldM;
+    this.clockDay = now.format('ddd, DD MMM');
+    return this.clockHour !== oldH || this.clockMinute !== oldM ||
+      this.clockDay != oldD;
   };
 
   timesched.controller('TimezoneCtrl', function($scope, $location,
@@ -486,6 +489,7 @@ var timesched = angular
       var params = $location.search();
       var zones = (params.tz || '').split(',');
       var dateChanged = false;
+      var setToToday = false;
       if (zones.length == 1 && zones[0] === '')
         zones = [];
 
@@ -504,6 +508,8 @@ var timesched = angular
           $scope.day = newDate.toDate();
           dateChanged = true;
         }
+      } else {
+        setToToday = true;
       }
 
       if (params.range) {
@@ -521,7 +527,7 @@ var timesched = angular
         $scope.markWeekends = true;
       }
 
-      if (dateChanged || $scope.zonesDifferInURL(allZones)) {
+      if (dateChanged || setToToday || $scope.zonesDifferInURL(allZones)) {
         $scope.homeZone = null;
         $scope.zones = [];
 
@@ -540,7 +546,10 @@ var timesched = angular
           var idx2 = allZones.indexOf(b.urlKey);
           return idx1 - idx2;
         });
-        $scope.checkForToday();
+        if (setToToday)
+          $scope.goToToday();
+        else
+          $scope.checkForToday();
       }
     };
 

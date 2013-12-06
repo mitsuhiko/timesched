@@ -170,6 +170,7 @@ form.navbar-date-form > div > input {
     display: table-cell;
     vertical-align: middle;
     font-size: 20px;
+    line-height: 14px;
 }
 
 .time-list > ul > li div.clock span.hour {
@@ -191,6 +192,15 @@ form.navbar-date-form > div > input {
     display: inline-block;
     text-align: left;
     width: 30px;
+}
+
+.time-list > ul > li div.clock span.day {
+    width: 66px;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+    font-size: 11px;
+    color: #888;
 }
 
 .time-list > ul > li div.time-cells {
