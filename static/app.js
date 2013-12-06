@@ -136,7 +136,7 @@ var timesched = angular
 
   TimeZoneState.prototype.update = function(day, homeZone) {
     var reftz = homeZone ? homeZone.tz : this.tz;
-    var start = moment.tz(day, reftz).startOf('day');
+    var start = moment.tz(moment(day).format('YYYY-MM-DDT00:00:00'), reftz);
     var ptr = start.clone().tz(this.tz);
     var offset = (start.zone() - ptr.zone()) / 60;
     var cacheDay = moment(day).format('YYYY-MM-DD');
