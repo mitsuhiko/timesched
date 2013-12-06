@@ -336,8 +336,10 @@ var timesched = angular
     $scope.updateZones = function() {
       if (!$scope.zones.length)
         return;
-      if ($scope.homeZone === null)
+      if ($scope.homeZone === null) {
         $scope.homeZone = $scope.zones[0];
+        $scope.checkForToday();
+      }
       $scope.zones.forEach(function(zone) {
         zone.update($scope.day, $scope.homeZone);
       });
