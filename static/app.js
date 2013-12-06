@@ -139,11 +139,11 @@ var timesched = angular
   };
 
   TimeZoneState.prototype.getRangeStart = function(range) {
-    return this.dayStart.clone().add('minutes', range[0] * 15);
+    return this.dayStart.clone().add('minutes', range[0]);
   };
 
   TimeZoneState.prototype.getRangeEnd = function(range) {
-    return this.dayStart.clone().add('minutes', range[1] * 15);
+    return this.dayStart.clone().add('minutes', range[1]);
   };
 
   TimeZoneState.prototype.updateClock = function() {
@@ -164,7 +164,7 @@ var timesched = angular
     $scope.homeZone = null;
     $scope.currentZone = null;
     $scope.ready = false;
-    $scope.timeRange = [40, 68];
+    $scope.timeRange = [600, 1020];
     $scope.scheduleMeeting = false;
     $scope.meetingSummary = '';
 

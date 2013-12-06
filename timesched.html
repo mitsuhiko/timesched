@@ -96,7 +96,7 @@
       <div class="range-selection" ng-show="zones.length > 0">
         <div class="action"><input type="checkbox" id="meeting" ng-model="scheduleMeeting">
           <label for="meeting">Schedule a meeting</label></div>
-        <div ui-slider="{range: true}" min="0" max="96" ng-model="timeRange"
+        <div ui-slider="{range: true}" min="0" max="1440" step="15" ng-model="timeRange"
           ng-show="scheduleMeeting"></div>
         <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
         <p class="share" ng-show="scheduleMeeting">
