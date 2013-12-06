@@ -251,6 +251,11 @@ var timesched = angular
       $scope.zones = newList;
     };
 
+    $scope.clearList = function() {
+      $scope.zones = [];
+      $scope.saveState(true);
+    };
+
     $scope.updateClocks = function() {
       var rv = false;
       $scope.zones.forEach(function(zone) {
@@ -308,7 +313,7 @@ var timesched = angular
       });
     };
 
-    $scope.saveState = function() {
+    $scope.saveState = function(doNotReplace) {
       if (!$scope.ready)
         return;
       var buf = [];
@@ -329,7 +334,8 @@ var timesched = angular
           params.date != $location.search.date ||
           params.range != $location.search.range) {
         $location.search(params);
-        $location.replace();
+        if (!doNotReplace)
+          $location.replace();
       }
 
       if ($scope.scheduleMeeting)
