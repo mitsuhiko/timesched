@@ -9,6 +9,10 @@ var timesched = angular
   });
 
 (function() {
+  var TWEET_PREFIX = 'Let\'s meet at ';
+  var MAIL_SUBJECT = 'Scheduled Meeting';
+  var MAIL_HEADER = '\n\n';
+  var MAIL_FOOTER = '';
   var SELECTABLES = [];
   var SELECTABLES_BY_NAME = {};
   var SELECTABLES_BY_KEY = {};
@@ -134,6 +138,14 @@ var timesched = angular
     this.updateClock();
   };
 
+  TimeZoneState.prototype.getRangeStart = function(range) {
+    return this.dayStart.clone().add('minutes', range[0] * 15);
+  };
+
+  TimeZoneState.prototype.getRangeEnd = function(range) {
+    return this.dayStart.clone().add('minutes', range[1] * 15);
+  };
+
   TimeZoneState.prototype.updateClock = function() {
     var now = moment.tz(this.tz);
     var oldH = this.clockHour;
@@ -194,7 +206,6 @@ var timesched = angular
           // convert it into a date.  This seems to work.
           $scope.day = moment(moment.tz(
             $scope.homeZone.tz).format('YYYY-MM-DD') + 'T12:00:00').toDate();
-          console.log(moment($scope.day).format());
         }
         $scope.$apply();
       });
@@ -231,6 +242,13 @@ var timesched = angular
       var copy = $scope.zones.slice(0);
       copy.sort(sortFunc);
       $scope.zones = copy;
+    };
+
+    $scope.reverse = function() {
+      var newList = [];
+      for (var i = $scope.zones.length - 1; i >= 0; i--)
+        newList.push($scope.zones[i]);
+      $scope.zones = newList;
     };
 
     $scope.updateClocks = function() {
@@ -309,20 +327,26 @@ var timesched = angular
         params.range = $scope.timeRange[0] + ',' + $scope.timeRange[1];
       if (params.tz != $location.search.tz ||
           params.date != $location.search.date ||
-          params.range != $location.search.range)
+          params.range != $location.search.range) {
         $location.search(params);
+        $location.replace();
+      }
 
       if ($scope.scheduleMeeting)
         $scope.updateMeetingSummary();
     };
 
     $scope.updateMeetingSummary = function() {
+      $scope.meetingSummary = $scope.makeTableSummary();
+    };
+
+    $scope.makeTableSummary = function() {
       var lines = [];
       var fmt = 'HH:mm   ddd, MMM D YYYY';
       for (var i = 0; i < $scope.zones.length; i++) {
         var zone = $scope.zones[i];
-        var start = zone.dayStart.clone().add('minutes', $scope.timeRange[0] * 15);
-        var end = zone.dayStart.clone().add('minutes', $scope.timeRange[1] * 15);
+        var start = zone.getRangeStart($scope.timeRange);
+        var end = zone.getRangeEnd($scope.timeRange);
         if (i > 0)
           lines.push('');
         lines.push(zone.timezoneName + '  [' + start.format('z; [UTC]ZZ') +
@@ -330,7 +354,37 @@ var timesched = angular
         lines.push(start.format(fmt));
         lines.push(end.format(fmt));
       }
-      $scope.meetingSummary = lines.join('\n');
+      return lines.join('\n');
+    };
+
+    $scope.getMailBody = function() {
+      return MAIL_HEADER + $scope.makeTableSummary() + MAIL_FOOTER;
+    };
+
+    $scope.sendMeetingMail = function() {
+      location.href = 'mailto:?' +
+        'subject=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
+        'body=' + encodeURIComponent($scope.getMailBody());
+    };
+
+    $scope.sendMeetingMailViaGMail = function() {
+      window.open('https://mail.google.com/mail/?view=cm&' +
+        'to=&su=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
+        'body=' + encodeURIComponent($scope.getMailBody()), '_blank');
+    };
+
+    $scope.tweet = function() {
+      var times = [];
+      for (var i = 0; i < $scope.zones.length; i++) {
+        var zone = $scope.zones[i];
+        var start = zone.getRangeStart($scope.timeRange);
+        var end = zone.getRangeEnd($scope.timeRange);
+        times.push(start.format('HH:mm') + '-' +
+                   end.format('HH:mm') + ' ' + start.format('z'));
+      }
+      window.open('https://www.twitter.com/share?' +
+        'text=' + encodeURIComponent(TWEET_PREFIX + times.join(', ')) + '&' +
+        'url=' + encodeURIComponent(document.location.href), '_blank');
     };
 
     $scope.zonesDifferInURL = function(urlZones) {

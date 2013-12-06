@@ -31,7 +31,7 @@
         <form class="navbar-form navbar-left navbar-date-form">
           <div class="form-group">
             <input type="text" class="form-control"
-              datepicker-popup="yyyy-MM-dd" ng-model="day" ng-required="true">
+              datepicker-popup="yyyy-MM-dd" ng-model="day" readonly ng-required="true">
           </div>
         </form>
         <p class="navbar-text navbar-warning-text" ng-show="!isToday">
@@ -43,6 +43,7 @@
             <ul class="dropdown-menu">
               <li><a ng-click="sortByOffset()">Sort by offset</a></li>
               <li><a ng-click="sortByName()">Sort by name</a></li>
+              <li><a ng-click="reverse()">Reverse list</a></li>
             </ul>
           </li>
         </ul>
@@ -91,12 +92,17 @@
           </div>
         </li>
       </ul>
-      <div class="range-selection">
+      <div class="range-selection" ng-show="zones.length > 0">
         <div class="action"><input type="checkbox" id="meeting" ng-model="scheduleMeeting">
           <label for="meeting">Schedule a meeting</label></div>
         <div ui-slider="{range: true}" min="0" max="96" ng-model="timeRange"
           ng-show="scheduleMeeting"></div>
         <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
+        <p class="share" ng-show="scheduleMeeting">
+          Share:
+          <a href="#" ng-click="sendMeetingMail()">Send mail</a>,
+          <a href="#" ng-click="sendMeetingMailViaGMail()">Send via gmail</a>,
+          <a href="#" ng-click="tweet()">Tweet</a>
       </div>
     </div>
   </div>

@@ -40,6 +40,7 @@ form.navbar-date-form {
 form.navbar-date-form > div > input {
     width: 110px;
     text-align: center;
+    cursor: pointer!important;
 }
 
 .navbar-warning-text {
@@ -80,6 +81,10 @@ form.navbar-date-form > div > input {
     font-size: 12px;
 }
 
+.range-selection .share {
+    margin: 10px;
+}
+
 /* time list */
 .time-list > ul {
     list-style: none;
@@ -102,9 +107,10 @@ form.navbar-date-form > div > input {
 }
 
 .time-list > ul > li div.location-info {
-    padding: 0 8px 0 8px;
     display: table-cell;
     vertical-align: top;
+    line-height: 0.85;
+    width: 215px;
 }
 
 .time-list > ul > li div.location-info .dropdown > a {

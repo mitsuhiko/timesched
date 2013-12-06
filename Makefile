@@ -9,7 +9,6 @@ compress: lib/generated/data.js
 		lib/sortable.js \
 		lib/slider.js \
 		lib/ui-bootstrap.js \
-		lib/ui-bootstrap-tpls.js \
 		lib/moment.js \
 		lib/moment-timezone.js \
 		lib/typeahead.js \
