@@ -481,7 +481,6 @@ var timesched = angular
       restrict: 'ACE',
       require: 'ngModel',
       scope: {
-        datasets: '=',
         ngModel: '='
       },
       link: function(scope, elm, attrs, ctrl) {
@@ -491,6 +490,7 @@ var timesched = angular
           name: 'timezone',
           local: SELECTABLES,
           valueKey: 'd',
+          limit: 6,
           engine: {compile: function() {
             return {
               render: function(context) {
@@ -526,9 +526,9 @@ var timesched = angular
 
         elm.bind('input', function() {
           scope.$apply(function() {
+            localChange = true;
             var value = elm.val();
             if (zoneExists(value)) {
-              localChange = true;
               ctrl.$setValidity('timezone', true);
               scope.ngModel = value;
             } else {
