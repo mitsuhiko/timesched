@@ -45,7 +45,7 @@
               <li><a ng-click="sortByName()">Sort by name</a></li>
               <li><a ng-click="reverse()">Reverse list</a></li>
               <li><a ng-click="clearList()">Clear list</a></li>
-              <li ng-class="{active: markWeekends}"><a ng-click="toggleMarkWeekends()">Mark weekends</a>
+              <li><a ng-click="toggleMarkWeekends()">{{ markWeekends && 'Hide weekends' || 'Show weekends' }}</a>
             </ul>
           </li>
         </ul>
