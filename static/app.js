@@ -309,7 +309,7 @@ var timesched = angular
         return;
 
       $('.ui-slider-range', $element).css({
-        height: (32 + $scope.zones.length * 54) + 'px'
+        height: (32 + $scope.zones.length * 50) + 'px'
       });
     };
 
