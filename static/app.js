@@ -256,14 +256,8 @@ var timesched = angular
         if ($scope.homeZone === null) {
           $scope.day = new Date();
         } else {
-          // this is a very shitty and unreliable way to pick a date.  I do
-          // this because the date picker needs $scope.day to be a date
-          // object :-/  Since date objects are in local time moment cannot
-          // directly convert to it.  So what I do is pad out the date, add
-          // 12 hours (where dst changes are less likely to happen) and
-          // convert it into a date.  This seems to work.
           $scope.day = moment(moment.tz(
-            $scope.homeZone.tz).format('YYYY-MM-DD') + 'T12:00:00').toDate();
+            $scope.homeZone.tz).format('YYYY-MM-DD') + 'T00:00:00').toDate();
         }
         $scope.$apply();
       });
@@ -329,7 +323,7 @@ var timesched = angular
       if ($scope.homeZone === null)
         return;
       var now = moment.tz($scope.homeZone.tz).format('YYYY-MM-DD');
-      var dayStart = moment.tz($scope.day, $scope.homeZone.tz).format('YYYY-MM-DD');
+      var dayStart = moment($scope.day).format('YYYY-MM-DD');
       $scope.isToday = now == dayStart;
     };
 
