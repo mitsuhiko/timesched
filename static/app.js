@@ -183,6 +183,7 @@ var timesched = angular
     $scope.scheduleMeeting = false;
     $scope.meetingSummary = '';
     $scope.markWeekends = true;
+    $scope.showClocks = true;
 
     // make the datepicker show monday by default
     datepickerConfig.startingDay = 1;
@@ -210,6 +211,11 @@ var timesched = angular
     $scope.toggleMarkWeekends = function() {
       $scope.markWeekends = !$scope.markWeekends;
       $scope.saveState();
+    };
+
+    $scope.toggleClocks = function() {
+      $scope.showClocks = !$scope.showClocks;
+      $scope.syncClockPointer();
     };
 
     $scope.goToToday = function() {
@@ -316,14 +322,29 @@ var timesched = angular
     });
 
     $scope.$watch('timeRange', function() {
+      $scope.syncClockPointer();
       $scope.syncSlider();
       $scope.saveState();
     });
 
     $scope.$watchCollection('zones', function() {
+      $scope.syncClockPointer();
       $scope.syncSlider();
       $scope.saveState();
     });
+
+    $scope.syncClockPointer = function() {
+      var ptr = $('.clock-pointer > .actual-pointer', $element);
+      if ($scope.homeZone === null || !$scope.isToday || !$scope.showClocks) {
+        ptr.hide();
+      } else {
+        ptr.css({
+          height: $scope.zones.length * 50 + 'px',
+          left: ((parseInt($scope.homeZone.clockHour, 10) * 60 +
+                  parseInt($scope.homeZone.clockMinute, 10)) / 1440) * 100 + '%'
+        }).show();
+      }
+    };
 
     $scope.syncSlider = function() {
       if (!$scope.scheduleMeeting)
@@ -499,6 +520,7 @@ var timesched = angular
       $('div.contentwrapper').fadeIn('slow', function() {
         window.setInterval(function() {
           if ($scope.updateClocks()) {
+            $scope.syncClockPointer();
             $scope.$apply();
           }
         }, 1000);

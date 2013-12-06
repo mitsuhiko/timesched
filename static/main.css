@@ -52,6 +52,25 @@ form.navbar-date-form > div > input {
     color: #D3F2DF;
 }
 
+/* clock pointer */
+.clock-pointer {
+    position: relative;
+    background: blue;
+    width: 624px;
+    float: right;
+    margin-right: 5px;
+}
+
+.clock-pointer > .actual-pointer {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    margin-left: -1px;
+    background: #d00;
+    opacity: 0.7;
+    z-index: 10000;
+}
+
 /* time selection */
 .range-selection {
     margin: 15px 0;

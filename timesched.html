@@ -45,7 +45,11 @@
               <li><a ng-click="sortByName()">Sort by name</a></li>
               <li><a ng-click="reverse()">Reverse list</a></li>
               <li><a ng-click="clearList()">Clear list</a></li>
+              <li class="divider">
+              <li><a ng-click="goToToday()">Go to today</a>
+              <li class="divider">
               <li><a ng-click="toggleMarkWeekends()">{{ markWeekends && 'Hide weekends' || 'Show weekends' }}</a>
+              <li><a ng-click="toggleClocks()" ng-show="isToday">{{ showClocks && 'Hide clocks' || 'Show clocks' }}</a>
             </ul>
           </li>
         </ul>
@@ -69,7 +73,7 @@
             </div>
           </div>
           <div class="clock">
-            <div class="clockwrapper" ng-show="isToday">
+            <div class="clockwrapper" ng-show="isToday && showClocks">
               <span class="hour">{{ zone.clockHour }}</span><!--
            --><span class="sep">:</span><!--
            --><span class="minute">{{ zone.clockMinute }}</span>
@@ -95,6 +99,7 @@
           </div>
         </li>
       </ul>
+      <div class="clock-pointer"><div class="actual-pointer"></div></div>
       <div class="range-selection" ng-show="zones.length > 0">
         <div class="action"><input type="checkbox" id="meeting" ng-model="scheduleMeeting">
           <label for="meeting">Schedule a meeting</label></div>
