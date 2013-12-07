@@ -11,9 +11,27 @@ body {
 }
 
 /* header */
+div.header {
+    position: relative;
+}
+
 div.header h1 {
     font-size: 3em;
     color: black;
+}
+
+.share {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.share * {
+    vertical-align: middle;
+}
+
+.share > span {
+    padding-right: 10px;
 }
 
 /* footer */

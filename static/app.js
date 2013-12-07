@@ -572,6 +572,7 @@ var timesched = angular
 
       $('div.loading').hide();
       $('div.contentwrapper').fadeIn('slow', function() {
+        $('div.share').fadeIn('slow');
         window.setInterval(function() {
           if ($scope.updateClocks()) {
             $scope.syncClockPointer();
