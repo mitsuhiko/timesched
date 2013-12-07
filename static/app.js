@@ -48,7 +48,7 @@ var timesched = angular
     }
     var m;
     try {
-      m = moment.tz(normalizeZoneName(zone.z));
+      m = moment().tz(normalizeZoneName(zone.z));
     } catch (e) {
     }
     return m !== null ? new TimeZoneState(m, zone) : null;
@@ -189,7 +189,7 @@ var timesched = angular
   };
 
   TimeZoneState.prototype.updateClock = function() {
-    var now = moment.tz(this.tz);
+    var now = moment().tz(this.tz);
     var oldH = this.clockHour;
     var oldM = this.clockMinute;
     var oldD = this.clockDay;
@@ -256,7 +256,7 @@ var timesched = angular
         if ($scope.homeZone === null) {
           $scope.day = new Date();
         } else {
-          $scope.day = moment(moment.tz(
+          $scope.day = moment(moment().tz(
             $scope.homeZone.tz).format('YYYY-MM-DD') + 'T00:00:00').toDate();
         }
         $scope.$apply();
@@ -322,7 +322,7 @@ var timesched = angular
     $scope.checkForToday = function() {
       if ($scope.homeZone === null)
         return;
-      var now = moment.tz($scope.homeZone.tz).format('YYYY-MM-DD');
+      var now = moment().tz($scope.homeZone.tz).format('YYYY-MM-DD');
       var dayStart = moment($scope.day).format('YYYY-MM-DD');
       $scope.isToday = now == dayStart;
     };
@@ -599,7 +599,7 @@ var timesched = angular
                 // TODO: escape just in case.
                 var rv = '<p>' + context.d;
                 try {
-                  var now = moment.tz(context.z);
+                  var now = moment().tz(context.z);
                   rv += '\u00a0<em>' + now.format('HH:mm') + '</em>';
                   rv += '\u00a0<small>' + now.format('z') + '</small>';
                 } catch (e) {}
