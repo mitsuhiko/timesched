@@ -67,7 +67,7 @@ var timesched = angular
     });
   }
 
-  function getLocaleTimeZoneState() {
+  function getLocalTimeZoneState() {
     var tried = {};
 
     var now = Date.now();
@@ -220,7 +220,6 @@ var timesched = angular
   timesched.controller('TimezoneCtrl', function($scope, $location,
                                                 datepickerConfig, $element,
                                                 $timeout) {
-    var skipSave = false;
     $scope.day = new Date();
     $scope.isToday = true;
     $scope.zones = [];
@@ -285,15 +284,19 @@ var timesched = angular
     };
 
     $scope.goToToday = function() {
+      if ($scope.homeZone === null) {
+        $scope.day = new Date();
+      } else {
+        $scope.day = moment(moment().tz(
+          $scope.homeZone.tz).format('YYYY-MM-DD') + 'T00:00:00').toDate();
+      }
+    };
+
+    $scope.goToTodayInteractive = function() {
       $timeout(function() {
         // dismiss the timezone box
         $('body').trigger('click');
-        if ($scope.homeZone === null) {
-          $scope.day = new Date();
-        } else {
-          $scope.day = moment(moment().tz(
-            $scope.homeZone.tz).format('YYYY-MM-DD') + 'T00:00:00').toDate();
-        }
+        $scope.goToToday();
         $scope.$apply();
       });
     };
@@ -420,10 +423,6 @@ var timesched = angular
     $scope.saveState = function(doNotReplace) {
       if (!$scope.ready)
         return;
-      if (skipSave) {
-        skipSave = false;
-        return;
-      }
       var buf = [];
       for (var i = 0; i < $scope.zones.length; i++) {
         var zone = $scope.zones[i];
@@ -524,13 +523,16 @@ var timesched = angular
       return false;
     };
 
-    $scope.syncWithURL = function() {
+    $scope.syncWithURL = function(initialSync) {
       var allZones = [];
       var homeZone = null;
       var params = $location.search();
       var zones = (params.tz || '').split(',');
       var dateChanged = false;
       var setToToday = false;
+
+      initialSync = initialSync || false;
+
       if (zones.length == 1 && zones[0] === '')
         zones = [];
 
@@ -568,6 +570,12 @@ var timesched = angular
         $scope.markWeekends = true;
       }
 
+      if (initialSync && allZones.length === 0) {
+        var detectedHomeZoneState = getLocalTimeZoneState();
+        if (detectedHomeZoneState)
+          allZones = [detectedHomeZoneState.urlKey];
+      }
+
       if (dateChanged || setToToday || $scope.zonesDifferInURL(allZones)) {
         $scope.homeZone = null;
         $scope.zones = [];
@@ -587,39 +595,30 @@ var timesched = angular
           var idx2 = allZones.indexOf(b.urlKey);
           return idx1 - idx2;
         });
-        if (setToToday)
+        if (setToToday) {
           $scope.goToToday();
-        else
+        } else {
           $scope.checkForToday();
+        }
       }
     };
 
     $scope.$on('$locationChangeSuccess', $scope.syncWithURL);
     window.setTimeout(function() {
+      $scope.syncWithURL(true);
+      $scope.$apply();
       $scope.ready = true;
-      $scope.syncWithURL();
 
-      // in case we did not find any zones try autodetection for
-      // the current one.  If that succeeds we do not want to save
-      // the state though, to keep the url clean.
-      if ($scope.zones.length === 0) {
-        var home = getLocaleTimeZoneState();
-        if (home !== null) {
-          skipSave = true;
-          $scope.addZone(home.urlKey);
-          $scope.$apply();
-        }
-      }
-
-      $('div.loading').hide();
-      $('div.contentwrapper').fadeIn('slow', function() {
+      $('div.loading').fadeOut('fast', function() {
         $('div.share').fadeIn('slow');
-        window.setInterval(function() {
-          if ($scope.updateClocks()) {
-            $scope.syncClockPointer();
-            $scope.$apply();
-          }
-        }, 1000);
+        $('div.contentwrapper').fadeIn('slow', function() {
+          window.setInterval(function() {
+            if ($scope.updateClocks()) {
+              $scope.syncClockPointer();
+              $scope.$apply();
+            }
+          }, 1000);
+        });
       });
     }, 100);
   });
