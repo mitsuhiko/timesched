@@ -61,13 +61,17 @@ a:focus {
     border: 1px solid #2A7546;
 }
 
+.btn {
+    border: 1px solid #ccc;
+}
+
 .btn-default:hover,
 .btn-default:focus,
 .btn-default:active,
 .btn-default.active {
     color: #333333;
     background-color: #ebebeb;
-    border: 1px solid #2A7546;
+    border: 1px solid #aaa;
 }
 
 .btn-default.disabled,
@@ -217,4 +221,13 @@ a:focus {
     font-size: 14px;
     color: white;
     background-color: transparent;
+}
+
+/* modals */
+body.modal-open {
+    overflow-y: scroll;
+}
+
+.modal-content {
+    border-radius: 0;
 }

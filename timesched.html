@@ -50,6 +50,9 @@
               <li class="divider">
               <li><a ng-click="toggleMarkWeekends()">{{ markWeekends && 'Hide weekends' || 'Show weekends' }}</a>
               <li><a ng-click="toggleClocks()" ng-show="isToday">{{ showClocks && 'Hide clocks' || 'Show clocks' }}</a>
+              <li class="divider">
+              <li><a ng-click="getShortURL()">Get short link</a>
+              <li><a ng-click="showHelp()">Help</a>
             </ul>
           </li>
         </ul>
@@ -108,10 +111,11 @@
           ng-show="scheduleMeeting"></div>
         <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
         <p class="share-links" ng-show="scheduleMeeting">
-          Share:
-          <a href="#" ng-click="sendMeetingMail()">Send mail</a>,
-          <a href="#" ng-click="sendMeetingMailViaGMail()">Send via gmail</a>,
-          <a href="#" ng-click="tweet()">Tweet</a>
+          Share this meeting:
+          <a href="#" ng-click="sendMeetingMail()">via e-mail</a>,
+          <a href="#" ng-click="sendMeetingMailViaGMail()">send via gmail</a>,
+          <a href="#" ng-click="tweet()">tweet it</a>,
+          <a href="#" ng-click="getShortURL()">get short link</a>
       </div>
     </div>
   </div>
@@ -125,6 +129,79 @@
       &copy; Copyright 2013 by <a href="http://lucumr.pocoo.org/">Armin Ronacher</a>.
       Proudly BSD licensed.
       <a href="https://github.com/mitsuhiko/timesched">fork me on github</a>.
+  </div>
+</div>
+
+<div class="modal fade" id="short-url-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Short URL Generated</h4>
+      </div>
+      <div class="modal-body">
+        <p>A short URL for this page was generated:
+        <p class="short-url"><input onclick="this.select()" type="text" class="form-control" readonly>
+        <p>
+          You can share this URL with other people and they will see the same
+          page as you.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Time Scheduler Help</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          This application allows you to schedule meetings in different timezones around
+          the world.  It knows about most large cities and timezones in the world.
+        <h3>How to Add Timezones</h3>
+        <p>
+          Enter the name of the city you want to add to the top left input box and an
+          auto complete should appear to help you add it.  Note that some cities might
+          have slightly different names to what you expect as all cities have latin
+          transcribed names here for ease of input.  For instance it's “Nuernberg” instead
+          of “Nürnberg”.
+        <h3>Why Cities and not Timezones?</h3>
+        <p>
+          The application supports most timezones in the world but it's recommended to use
+          cities instead because that will give you more accurate information.  For
+          instance if you pick arabic cities the weekends will be adjusted accordingly
+          based on local rules.
+        <h3>What are the Colors?</h3>
+        <p>
+          The darker the colors the more into the night it goes.  Red means weekends.  Note
+          that weekends are country specific.  If you just select a timezone but not a
+          city the weekends will be generic (Saturday and Sunday).
+        <h3>A Timzone is Wrong</h3>
+        <p>
+          The timezones are not defined by this application but pulled from official sources.
+          It can however happen that the version here lags behind.
+          <a href="mailto:armin.ronacher@active-4.com">contact the
+          developer</a> if something is wrong.
+        <h3>Who Made This?</h3>
+        <p>
+          This application was written by Armin Ronacher for a person very dear to his
+          heart after a similar service started charging fort his functionality.
+          <a href="mailto:armin.ronacher@active-4.com">contact him</a> for feedback.
+        <h3>Can I Get the Sourcecode?</h3>
+        <p>
+          Yes, the sourcecode is available on github:
+          <a href="https://github.com/mitsuhiko/timesched">mitsuhiko/timesched</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Got it</button>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -9,10 +9,12 @@ var timesched = angular
   });
 
 (function() {
+  var BITLY_USERNAME = 'timesched';
+  var BITLY_API_KEY = 'R_3f0f8f820913780173ac3fc19845d0b5';
   var TWEET_PREFIX = 'Let\'s meet at ';
   var MAIL_SUBJECT = 'Scheduled Meeting';
   var MAIL_HEADER = '\n\n';
-  var MAIL_FOOTER = '';
+  var MAIL_FOOTER = '\n\nView this time table online: $url';
   var SELECTABLES = [];
   var WEEKEND_INFO = {};
   var SELECTABLES_BY_NAME = {};
@@ -52,6 +54,17 @@ var timesched = angular
     } catch (e) {
     }
     return m !== null ? new TimeZoneState(m, zone) : null;
+  }
+
+  function shortenURL(url, func) {
+    $.getJSON('https://api-ssl.bitly.com/v3/shorten?callback=?', {
+      format: 'json',
+      apiKey: BITLY_API_KEY,
+      login: BITLY_USERNAME,
+      longUrl: url
+    }, function(response) {
+      func(response.data.url);
+    });
   }
 
   function getLocaleTimeZoneState() {
@@ -253,6 +266,24 @@ var timesched = angular
       $scope.syncClockPointer();
     };
 
+    $scope.shortenThisURL = function(func) {
+      shortenURL(window.location.href, function(url) {
+        func(url);
+      });
+    };
+
+    $scope.getShortURL = function() {
+      $scope.shortenThisURL(function(url) {
+        var dialog = $('#short-url-modal');
+        $('.short-url > input', dialog).val(url);
+        dialog.modal({backdrop: 'static'}).modal('show');
+      });
+    };
+
+    $scope.showHelp = function() {
+      $('#help-modal').modal('show');
+    };
+
     $scope.goToToday = function() {
       $timeout(function() {
         // dismiss the timezone box
@@ -443,20 +474,27 @@ var timesched = angular
       return lines.join('\n');
     };
 
-    $scope.getMailBody = function() {
-      return MAIL_HEADER + $scope.makeTableSummary() + MAIL_FOOTER;
+    $scope.getMailBody = function(func) {
+      $scope.shortenThisURL(function(url) {
+        func(MAIL_HEADER + $scope.makeTableSummary() +
+          MAIL_FOOTER.replace('$url', url), url);
+      });
     };
 
     $scope.sendMeetingMail = function() {
-      location.href = 'mailto:?' +
-        'subject=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
-        'body=' + encodeURIComponent($scope.getMailBody());
+      $scope.getMailBody(function(body) {
+        location.href = 'mailto:?' +
+          'subject=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
+          'body=' + encodeURIComponent(body);
+      });
     };
 
     $scope.sendMeetingMailViaGMail = function() {
-      window.open('https://mail.google.com/mail/?view=cm&' +
-        'to=&su=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
-        'body=' + encodeURIComponent($scope.getMailBody()), '_blank');
+      $scope.getMailBody(function(body) {
+        window.open('https://mail.google.com/mail/?view=cm&' +
+          'to=&su=' + encodeURIComponent(MAIL_SUBJECT) + '&' +
+          'body=' + encodeURIComponent(body), '_blank');
+      });
     };
 
     $scope.tweet = function() {
@@ -468,9 +506,12 @@ var timesched = angular
         times.push(start.format('HH:mm') + '-' +
                    end.format('HH:mm') + ' ' + start.format('z'));
       }
-      window.open('https://www.twitter.com/share?' +
-        'text=' + encodeURIComponent(TWEET_PREFIX + times.join(', ')) + '&' +
-        'url=' + encodeURIComponent(document.location.href), '_blank');
+
+      $scope.shortenThisURL(function(url) {
+        window.open('https://www.twitter.com/share?' +
+          'text=' + encodeURIComponent(TWEET_PREFIX + times.join(', ')) + '&' +
+          'url=' + encodeURIComponent(url), '_blank');
+      });
     };
 
     $scope.zonesDifferInURL = function(urlZones) {
