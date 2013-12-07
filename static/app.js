@@ -19,19 +19,7 @@ var timesched = angular
   var WEEKEND_INFO = {};
   var SELECTABLES_BY_NAME = {};
   var SELECTABLES_BY_KEY = {};
-
-  function uniq(tokens) {
-    var found = {};
-    var rv = [];
-    for (var i = 0; i < tokens.length; i++) {
-      var k = tokens[i];
-      if (found['::' + k] === undefined) {
-        rv.push(tokens[i]);
-        found['::' + k] = true;
-      }
-    }
-    return rv;
-  }
+  var COMMON_ZONES = [];
 
   function normalizeZoneName(zoneName) {
     return zoneName.toLowerCase().replace(/^\s+|\s+$/g, '');
@@ -68,8 +56,6 @@ var timesched = angular
   }
 
   function getLocalTimeZoneState() {
-    var tried = {};
-
     var now = Date.now();
     function makeKey(id) {
       return [0, 4, 8, -5 * 12, 4 - 5 * 12, 8 - 5 * 12].map(function(months) {
@@ -82,11 +68,8 @@ var timesched = angular
 
     var thisKey = makeKey();
 
-    for (var key in SELECTABLES_BY_KEY) {
-      var sel = SELECTABLES_BY_KEY[key];
-      if (sel.t !== 'T' || !sel.C || tried[sel.z] !== undefined)
-        continue;
-      tried[sel.z] = true;
+    for (var i = 0; i < COMMON_ZONES.length; i++) {
+      var sel = COMMON_ZONES[i];
       if (thisKey === makeKey(sel.z))
         return lookupTimeZoneState(sel.k);
     }
@@ -102,24 +85,16 @@ var timesched = angular
 
     for (var i = 0; i < data.selectables.length; i++) {
       var sel = data.selectables[i];
-      var s = sel.d.toLowerCase().replace(/[^\s\w]/g, '');
-      if (sel.t == 'T') {
-        try {
-          var zones = moment.tz(sel.z)._z.zones;
-          for (var j = 0; j < zones.length; j++) {
-            if (zones[j].letters === '%s')
-              continue;
-            s += ' ' + zones[j].letters.replace(/[^\s\w]/g, ' ');
-            s += ' ' + zones[j].letters;
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-      sel.tokens = uniq(s.split(/\s+/g));
+      sel.z = data.tzmap[sel.z];
+      sel.value = sel.d;
+      sel.tokens = sel.T.split(/ /);
+      delete sel.T;
+      delete sel.d;
       SELECTABLES.push(sel);
-      SELECTABLES_BY_NAME[sel.d.toLowerCase()] = sel;
+      SELECTABLES_BY_NAME[sel.value.toLowerCase()] = sel;
       SELECTABLES_BY_KEY[sel.k] = sel;
+      if (sel.C)
+        COMMON_ZONES.push(sel);
     }
     WEEKEND_INFO = data.weekends;
   };
@@ -142,8 +117,8 @@ var timesched = angular
     this.tz = m.tz();
     this.urlKey = zone.k;
     this.offset = 0;
-    this.timezoneShortName = zone.n;
-    this.timezoneName = zone.d;
+    this.timezoneShortName = zone.n || zone.value;
+    this.timezoneName = zone.value;
     this.weekendInfo = getWeekendInfo(zone.c || null);
 
     this._cacheDay = null;
@@ -173,13 +148,14 @@ var timesched = angular
     for (var i = 0; i < 24; i++) {
       if (i !== 0)
         ptr.add('hours', 1);
+      var formattedTokens = ptr.format('H|mm|LLLL (z)').split(/\|/);
       this.timeCells.push({
-        hour: parseInt(ptr.format('H'), 10),
-        hourFormat: ptr.format('H'),
-        minute: parseInt(ptr.format('m'), 10),
-        minuteFormat: ptr.format('mm'),
+        hour: parseInt(formattedTokens[0], 10),
+        hourFormat: formattedTokens[0],
+        minute: parseInt(formattedTokens[1], 10),
+        minuteFormat: formattedTokens[1],
         isWeekend: isWeekend(this.weekendInfo, ptr.day()),
-        tooltip: ptr.format('LLLL (z)')
+        tooltip: formattedTokens[2]
       });
     }
 
@@ -616,11 +592,14 @@ var timesched = angular
       $scope.updateMeetingSummary();
     };
 
-    $scope.$on('$locationChangeSuccess', $scope.syncWithURL);
     window.setTimeout(function() {
       $scope.syncWithURL(true);
       $scope.$apply();
       $scope.ready = true;
+
+      $scope.$on('$locationChangeSuccess', function() {
+        $scope.syncWithURL(false);
+      });
 
       $('div.loading').fadeOut('fast', function() {
         $('div.share').fadeIn('slow');
@@ -649,13 +628,12 @@ var timesched = angular
         elm.typeahead({
           name: 'timezone',
           local: SELECTABLES,
-          valueKey: 'd',
           limit: 6,
           engine: {compile: function() {
             return {
               render: function(context) {
                 // TODO: escape just in case.
-                var rv = '<p>' + context.d;
+                var rv = '<p>' + context.value;
                 try {
                   var now = moment().tz(context.z);
                   rv += '\u00a0<em>' + now.format('HH:mm') + '</em>';

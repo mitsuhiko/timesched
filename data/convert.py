@@ -1,6 +1,8 @@
 import os
+import re
 import math
 import json
+from itertools import chain
 from xml.etree import cElementTree as et
 
 
@@ -93,20 +95,53 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
     selectables = []
     timezones_found = set()
 
-    def record_selectable(key, name, full_name, type, tz,
+    timezone_mapping = {}
+    for tz in chain(timezone_data['zones'],
+                    timezone_data['links']):
+        if tz in timezone_mapping:
+            continue
+        timezone_mapping[tz] = len(timezone_mapping)
+    reverse_timezone_mapping = dict((v, k) for k, v in
+                                    timezone_mapping.iteritems())
+
+    def get_tz_tokens(tz):
+        # super shitty way to guess the timezone abbreviations.  Totally
+        # does not work for many of them.
+        rv = ''
+        if tz in timezone_data['links']:
+            tz = timezone_data['links'][tz]
+
+        zone = timezone_data['zones'][tz]
+        for zone_rule in zone:
+            tokens = zone_rule.split(None)
+            tmpl = tokens[2]
+            if '%s' not in tmpl:
+                rv += ' ' + tmpl
+
+        rv = rv.replace('/', ' ')
+
+        # reject obvious wrong ones.  obviously the above code can
+        # generate invalid abbreviations.
+        return [x for x in set(rv.lower().split()) if len(x) > 2]
+
+    def record_selectable(key, name, full_name, tz,
                           country=None, common_tz=False, sortinfo=None):
+        tokens = set(re.sub('[^\s\w]', '', full_name.lower()).split())
+        tokens.update(get_tz_tokens(tz))
+
         rv = {
             'k': key,
-            'n': name,
             'd': full_name,
-            'z': tz,
-            't': type,
+            'z': timezone_mapping[tz],
+            'T': ' '.join(sorted(tokens)),
             'sortinfo': sortinfo or {},
         }
+        if name != full_name:
+            rv['n'] = name
         if country is not None:
             rv['c'] = country
         if common_tz:
-            rv['C'] = True
+            rv['C'] = 1
         selectables.append(rv)
 
     for city in cities.itervalues():
@@ -124,7 +159,7 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
             display_parts.append(city['state'])
         display_parts.append(city['name'])
         record_selectable(key, city['name'], ', '.join(display_parts),
-                          'C', city['timezone'], city['country'],
+                          city['timezone'], city['country'],
                           sortinfo={'city': city})
         timezones_found.add(city['timezone'])
 
@@ -137,20 +172,20 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
             .replace('/', ':') \
             .replace(',', '') \
             .replace('\'', '')
-        record_selectable(key, name.split('/', 1)[-1], name, 'T', name)
+        record_selectable(key, name.split('/', 1)[-1], name, name)
 
     for name, tzname in windows_zones.iteritems():
         key = '-'.join(name.lower().split(None)) \
             .replace('(', '') \
             .replace(')', '') \
             .replace(',', '')
-        record_selectable(key, name, name, 'T', tzname, common_tz=True)
+        record_selectable(key, name, name, tzname, common_tz=True)
 
     def _sort_key(x):
         city = x['sortinfo'].get('city')
-        name = x['n'].lower()
+        name = x['d'].lower()
         importance = 0
-        if x['sortinfo'].get('common_tz'):
+        if x.get('C'):
             importance += 5
         if city:
             if city['is_capital']:
@@ -161,7 +196,9 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
     for selectable in selectables:
         selectable.pop('sortinfo', None)
 
+    timezone_data.pop('meta', None)
     return {
+        'tzmap': reverse_timezone_mapping,
         'timezones': timezone_data,
         'selectables': selectables,
         'weekends': weekends,
@@ -173,6 +210,7 @@ def write_combined_data(data, f):
     f.write('moment.tz.add(%s);\n' %
             json.dumps(data['timezones']))
     f.write('timesched.setTimezoneData(%s);\n' % json.dumps({
+        'tzmap': data['tzmap'],
         'selectables': data['selectables'],
         'weekends': data['weekends'],
     }))
