@@ -107,8 +107,7 @@
       <div class="range-selection" ng-show="zones.length > 0">
         <div class="action"><input type="checkbox" id="meeting" ng-model="scheduleMeeting">
           <label for="meeting">Schedule a meeting</label></div>
-        <div ui-slider="{range: true}" min="0" max="1440" step="15" ng-model="timeRange"
-          ng-show="scheduleMeeting"></div>
+        <div ui-slider ng-model="timeRange" ng-show="scheduleMeeting"></div>
         <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
         <p class="share-links" ng-show="scheduleMeeting">
           Share this meeting:
@@ -182,6 +181,10 @@
           The darker the colors the more into the night it goes.  Red means weekends.  Note
           that weekends are country specific.  If you just select a timezone but not a
           city the weekends will be generic (Saturday and Sunday).
+        <h3>Can I schedule less than 15 Minute Intervals?</h3>
+        <p>
+          Yes you can, if you hold cmd (on mac) or alt (on windows) down and it lets you
+          select in 5 minute intervals.
         <h3>A Timzone is Wrong</h3>
         <p>
           The timezones are not defined by this application but pulled from official sources.

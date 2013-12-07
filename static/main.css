@@ -340,6 +340,15 @@ ul.dropdown-menu a {
     color: #bbb;
 }
 
+input:focus, input:active, label {
+    outline: none!important;
+}
+
+label {
+    user-select: none;
+    -moz-user-select: none;
+}
+
 /* url share dialog */
 #short-url-modal .modal-dialog {
     position: absolute;

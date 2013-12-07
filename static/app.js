@@ -218,7 +218,8 @@ var timesched = angular
   };
 
   timesched.controller('TimezoneCtrl', function($scope, $location,
-                                                datepickerConfig, $element,
+                                                datepickerConfig,
+                                                uiSliderConfig, $element,
                                                 $timeout) {
     $scope.day = new Date();
     $scope.isToday = true;
@@ -234,6 +235,16 @@ var timesched = angular
 
     // make the datepicker show monday by default
     datepickerConfig.startingDay = 1;
+
+    // customize meeting slider to be a range slider that has smaller
+    // step increment when the meta key is pressed.
+    uiSliderConfig.min = 0;
+    uiSliderConfig.max = 1440;
+    uiSliderConfig.step = 15;
+    uiSliderConfig.range = true;
+    uiSliderConfig.slide = function(event, ui) {
+      $(ui.handle).parent().slider({step: event.metaKey ? 5 : 15});
+    };
 
     $scope.addInputZone = function() {
       if ($scope.addZone($scope.currentZone))
@@ -601,6 +612,8 @@ var timesched = angular
           $scope.checkForToday();
         }
       }
+
+      $scope.updateMeetingSummary();
     };
 
     $scope.$on('$locationChangeSuccess', $scope.syncWithURL);
