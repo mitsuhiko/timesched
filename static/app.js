@@ -118,7 +118,11 @@ var timesched = angular
   }
 
   function isWeekend(info, day) {
-    return day >= info[0] || day % 6 <= info[1];
+    var start = info[0];
+    var end = info[1];
+    if (start > end)
+      return day >= start || day <= end;
+    return day >= start && day <= end;
   }
 
   function TimeZoneState(m, zone) {
