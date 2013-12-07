@@ -107,7 +107,7 @@
         <div ui-slider="{range: true}" min="0" max="1440" step="15" ng-model="timeRange"
           ng-show="scheduleMeeting"></div>
         <pre class="meeting-info" ng-show="scheduleMeeting">{{ meetingSummary }}</pre>
-        <p class="share" ng-show="scheduleMeeting">
+        <p class="share-links" ng-show="scheduleMeeting">
           Share:
           <a href="#" ng-click="sendMeetingMail()">Send mail</a>,
           <a href="#" ng-click="sendMeetingMailViaGMail()">Send via gmail</a>,
