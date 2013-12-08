@@ -58,8 +58,12 @@ form.navbar-timezone-form {
     padding: 0;
 }
 
+form.navbar-timezone-form .timezone-input {
+    width: 280px;
+}
+
 form.navbar-timezone-form .tt-dropdown-menu {
-    width: 374px;
+    width: 394px;
 }
 
 form.navbar-date-form {

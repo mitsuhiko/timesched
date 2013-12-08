@@ -218,16 +218,6 @@ a:focus {
     color black;
 }
 
-.tt-hint {
-    margin-top: 1px;
-    margin-left: 1px;
-    height: 32px;
-    padding: 6px 10px;
-    font-size: 14px;
-    color: white;
-    background-color: transparent;
-}
-
 /* modals */
 body.modal-open {
     overflow-y: scroll;
