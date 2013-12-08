@@ -148,14 +148,17 @@ var timesched = angular
     for (var i = 0; i < 24; i++) {
       if (i !== 0)
         ptr.add('hours', 1);
-      var formattedTokens = ptr.format('H|mm|LLLL (z)').split(/\|/);
+      var formattedTokens = ptr.format('H|mm|LLLL (z)|ddd|DD|MMM').split(/\|/);
       this.timeCells.push({
         hour: parseInt(formattedTokens[0], 10),
         hourFormat: formattedTokens[0],
         minute: parseInt(formattedTokens[1], 10),
         minuteFormat: formattedTokens[1],
         isWeekend: isWeekend(this.weekendInfo, ptr.day()),
-        tooltip: formattedTokens[2]
+        tooltip: formattedTokens[2],
+        weekDayFormat: formattedTokens[3],
+        dayFormat: formattedTokens[4],
+        monthFormat: formattedTokens[5]
       });
     }
 

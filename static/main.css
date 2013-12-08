@@ -313,6 +313,33 @@ form.navbar-date-form > div > input {
     display: none;
 }
 
+.time-list > ul > li div.time-cells table .daystart span.hour,
+.time-list > ul > li div.time-cells table .daystart span.minute {
+    display: none;
+}
+
+.time-list > ul > li div.time-cells table .daystart span.dayinfo {
+    display: block;
+    padding-top: 2px;
+    line-height: 1.0;
+}
+
+.time-list > ul > li div.time-cells table .daystart span.dayinfo > span {
+    font-family: 'Open Sans Condensed', sans-serif!important;
+    font-size: 12px;
+    font-weight: 300;
+    display: block;
+    text-transform: uppercase;
+}
+
+.time-list > ul > li div.time-cells table .daystart span.dayinfo > span.day {
+    font-weight: 700;
+}
+
+.time-list > ul > li div.time-cells table .daystart span.dayinfo > span.weekday {
+    opacity: 0.5;
+}
+
 .loading p {
     margin: 25px 0;
     font-size: 18px;

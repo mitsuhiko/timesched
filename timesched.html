@@ -98,6 +98,11 @@
                     }" tooltip-placement="bottom" tooltip="{{ cell.tooltip }}">
                     <span class="hour">{{ cell.hourFormat }}</span><span class="sep"
                       >:</span><span class="minute">{{ cell.minuteFormat }}</span>
+                    <span class="dayinfo" ng-if="cell.hour == 0">
+                      <span class="weekday">{{ cell.weekDayFormat }}</span>
+                      <span class="day">{{ cell.dayFormat }}</span>
+                      <span class="month">{{ cell.monthFormat }}</span>
+                    </span>
                   </span>
             </table>
           </div>
