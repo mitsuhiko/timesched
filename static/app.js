@@ -306,6 +306,7 @@ var timesched = angular
         $scope.day = moment(moment().tz(
           $scope.homeZone.tz).format('YYYY-MM-DD') + 'T00:00:00').toDate();
       }
+      $scope.checkForToday();
     };
 
     $scope.goToTodayInteractive = function() {
