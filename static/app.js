@@ -220,6 +220,7 @@ var timesched = angular
     $scope.meetingSummary = '';
     $scope.markWeekends = loadFromStorage('markWeekends', true);
     $scope.showClocks = loadFromStorage('showClocks', true);
+    $scope.restoreTimezones = loadFromStorage('restoreTimezones', true);
 
     var localSearchChange = false;
 
@@ -272,6 +273,11 @@ var timesched = angular
     $scope.toggleClocks = function() {
       $scope.showClocks = !$scope.showClocks;
       $scope.syncClockPointer();
+    };
+
+    $scope.toggleRestoreTimezones = function() {
+      $scope.restoreTimezones = !$scope.restoreTimezones;
+      $scope.saveState();
     };
 
     $scope.shortenThisURL = function(func) {
@@ -353,6 +359,7 @@ var timesched = angular
 
     $scope.clearList = function() {
       $scope.zones = [];
+      $scope.homeZone = null;
       $scope.saveState(true);
     };
 
@@ -393,6 +400,10 @@ var timesched = angular
 
     $scope.$watch('showClocks', function() {
       putInStorage('showClocks', $scope.showClocks);
+    });
+
+    $scope.$watch('restoreTimezones', function() {
+      putInStorage('restoreTimezones', $scope.restoreTimezones);
     });
 
     $scope.$watch('day', function() {
@@ -617,8 +628,10 @@ var timesched = angular
 
       initialSync = initialSync || false;
 
-      var zoneString = params.tz || loadFromStorage('lastTimezones') || '';
-      var zones = zoneString.split(',');
+      var zoneString = params.tz;
+      if (!params.tz && $scope.restoreTimezones)
+        zoneString = loadFromStorage('lastTimezones');
+      var zones = (zoneString || '').split(',');
 
       if (zones.length == 1 && zones[0] === '')
         zones = [];

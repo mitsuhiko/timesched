@@ -55,6 +55,11 @@ a:focus {
     color: white;
 }
 
+.navbar-default .navbar-text a {
+    color: #B5E6C7;
+    font-weight: 600;
+}
+
 .form-control, .btn {
     border-radius: 0;
     box-shadow: none;

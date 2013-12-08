@@ -36,7 +36,8 @@
         </form>
         <p class="navbar-text navbar-warning-text" ng-show="!isToday">
           <strong>Reminder:</strong>
-          you're not scheduling for today
+          you're not scheduling for today.
+          <a href="#" ng-click="goToTodayInteractive()">Go to today</a>.
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
@@ -50,6 +51,7 @@
               <li class="divider">
               <li><a ng-click="toggleMarkWeekends()">{{ markWeekends && 'Hide weekends' || 'Show weekends' }}</a>
               <li><a ng-click="toggleClocks()" ng-show="isToday">{{ showClocks && 'Hide clocks' || 'Show clocks' }}</a>
+              <li><a ng-click="toggleRestoreTimezones()">{{ restoreTimezones && 'Don\'t restore timezones' || 'Restore timezones' }}</a>
               <li class="divider">
               <li><a ng-click="getShortURL()">Get short link</a>
               <li><a ng-click="showHelp()">Get help</a>
