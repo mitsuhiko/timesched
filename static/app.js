@@ -212,6 +212,8 @@ var timesched = angular
     $scope.markWeekends = true;
     $scope.showClocks = true;
 
+    var localSearchChange = false;
+
     // make the datepicker show monday by default
     datepickerConfig.startingDay = 1;
 
@@ -223,6 +225,14 @@ var timesched = angular
     uiSliderConfig.range = true;
     uiSliderConfig.slide = function(event, ui) {
       $(ui.handle).parent().slider({step: event.metaKey ? 5 : 15});
+      // because we're not saving the state we manually want to update
+      // the meeting summary here.
+      $scope.updateMeetingSummary();
+    };
+    uiSliderConfig.stop = function() {
+      $timeout(function() {
+        $scope.saveState();
+      }, 0);
     };
 
     $scope.addInputZone = function() {
@@ -379,7 +389,8 @@ var timesched = angular
     $scope.$watch('timeRange', function() {
       $scope.syncClockPointer();
       $scope.syncSlider();
-      $scope.saveState();
+      // do not save the state here because it's too slow.  Instead we
+      // manually save the state when the slider gets releaesd.
     });
 
     $scope.$watchCollection('zones', function() {
@@ -429,14 +440,10 @@ var timesched = angular
         params.range = $scope.timeRange[0] + ',' + $scope.timeRange[1];
       if (!$scope.markWeekends)
         params.weekends = '0';
-      if (params.tz != $location.search.tz ||
-          params.date != $location.search.date ||
-          params.range != $location.search.range ||
-          params.weekends != $location.search.weekends) {
-        $location.search(params);
-        if (!doNotReplace)
-          $location.replace();
-      }
+      localSearchChange = true;
+      $location.search(params);
+      if (!doNotReplace)
+        $location.replace();
 
       if ($scope.scheduleMeeting)
         $scope.updateMeetingSummary();
@@ -514,6 +521,11 @@ var timesched = angular
     };
 
     $scope.syncWithURL = function(initialSync) {
+      if (localSearchChange) {
+        localSearchChange = false;
+        return;
+      }
+
       var allZones = [];
       var homeZone = null;
       var params = $location.search();
