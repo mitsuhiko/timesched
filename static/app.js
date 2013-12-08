@@ -281,6 +281,7 @@ var timesched = angular
     };
 
     $scope.getShortURL = function() {
+      $scope.forceURL();
       $scope.shortenThisURL(function(url) {
         var dialog = $('#short-url-modal');
         $('.short-url > input', dialog).val(url);
@@ -439,6 +440,12 @@ var timesched = angular
       });
     };
 
+    $scope.forceURL = function() {
+      // makes sure a url exists in case we were still coming from
+      // the initial loading.
+      $scope.saveState(!$location.search().tz);
+    };
+
     $scope.saveState = function(doNotReplace) {
       if (!$scope.ready)
         return;
@@ -459,6 +466,7 @@ var timesched = angular
       if (!$scope.markWeekends)
         params.weekends = '0';
       localSearchChange = true;
+      putInStorage('lastTimezones', params.tz || '');
       $location.search(params);
       if (!doNotReplace)
         $location.replace();
@@ -604,11 +612,13 @@ var timesched = angular
       var allZones = [];
       var homeZone = null;
       var params = $location.search();
-      var zones = (params.tz || '').split(',');
       var dateChanged = false;
       var setToToday = false;
 
       initialSync = initialSync || false;
+
+      var zoneString = params.tz || loadFromStorage('lastTimezones') || '';
+      var zones = zoneString.split(',');
 
       if (zones.length == 1 && zones[0] === '')
         zones = [];
