@@ -383,6 +383,7 @@ var timesched = angular
     });
 
     $scope.$watch('scheduleMeeting', function() {
+      $scope.syncSlider();
       $scope.saveState();
     });
 
