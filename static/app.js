@@ -55,6 +55,15 @@ var timesched = angular
     });
   }
 
+  function loadFromStorage(key, def) {
+    var rv = window.localStorage.getItem('timesched-' + key);
+    return rv !== null ? JSON.parse(rv) : (def !== undefined ? def : null);
+  }
+
+  function putInStorage(key, value) {
+    window.localStorage.setItem('timesched-' + key, JSON.stringify(value));
+  }
+
   function getLocalTimeZoneState() {
     var now = Date.now();
     function makeKey(id) {
@@ -209,8 +218,8 @@ var timesched = angular
     $scope.timeRange = [600, 1020];
     $scope.scheduleMeeting = false;
     $scope.meetingSummary = '';
-    $scope.markWeekends = true;
-    $scope.showClocks = true;
+    $scope.markWeekends = loadFromStorage('markWeekends', true);
+    $scope.showClocks = loadFromStorage('showClocks', true);
 
     var localSearchChange = false;
 
@@ -376,6 +385,14 @@ var timesched = angular
         zone.update($scope.day, $scope.homeZone);
       });
     };
+
+    $scope.$watch('markWeekends', function() {
+      putInStorage('markWeekends', $scope.markWeekends);
+    });
+
+    $scope.$watch('showClocks', function() {
+      putInStorage('showClocks', $scope.showClocks);
+    });
 
     $scope.$watch('day', function() {
       $scope.updateZones();
