@@ -511,6 +511,63 @@ var timesched = angular
       });
     };
 
+    $scope.getMeetingRangeInUTC = function() {
+      var dayStart = $scope.homeZone.dayStart.clone().utc();
+      return [
+        dayStart.clone().add('minutes', $scope.timeRange[0]),
+        dayStart.clone().add('minutes', $scope.timeRange[1])
+      ];
+    };
+
+    $scope.addToGoogleCalendar = function() {
+      var rng = $scope.getMeetingRangeInUTC();
+      function _fmt(d) {
+        return d.format('YYYYMMDD[T]HHmm00[Z]');
+      }
+      $scope.getMailBody(function(body) {
+        window.open('https://www.google.com/calendar/render?' +
+          'action=TEMPLATE&' +
+          'text=Meeting&' +
+          'details=' + encodeURIComponent(body) + '&' +
+          'output=xml&' +
+          'sf=true&' +
+          'trp=true&' +
+          'dates=' + encodeURIComponent(_fmt(rng[0]) + '/' + _fmt(rng[1])),
+            '_blank');
+      });
+    };
+
+    $scope.getICalFile = function() {
+      function _rc() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+                   .toString(16).substring(1);
+      }
+      function _fmt(dt) {
+        return dt.format('YYYYMMDD[T]HHmm00[Z]');
+      }
+      function _quote(text) {
+        return text.replace(/\//g, '\\\\').replace(/\n/g, '\\n');
+      }
+      var rng = $scope.getMeetingRangeInUTC();
+      var lines = [];
+      lines.push('BEGIN:VCALENDAR');
+      lines.push('VERSION:2.0');
+      lines.push('PRODID:pocoo-timesched');
+      lines.push('METHOD:PUBLISH');
+      lines.push('BEGIN:VEVENT');
+      lines.push('UID:' + _rc() + _rc() + _rc() + '@timesched.pocoo.org');
+      lines.push('DTSTAMP:' + _fmt(moment.utc()));
+      lines.push('SUMMARY:' + 'Meeting');
+      lines.push('DTSTART:' + _fmt(rng[0]));
+      lines.push('DTEND:' + _fmt(rng[1]));
+      lines.push('DESCRIPTION:' + _quote($scope.makeTableSummary()));
+      lines.push('END:VEVENT');
+      lines.push('END:VCALENDAR');
+
+      window.location.href = 'data:text/calendar;charset=utf-8,' +
+        encodeURIComponent(lines.join('\n'));
+    };
+
     $scope.zonesDifferInURL = function(urlZones) {
       if (urlZones.length != $scope.zones.length)
         return true;
