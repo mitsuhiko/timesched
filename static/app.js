@@ -238,6 +238,7 @@ var timesched = angular
       // because we're not saving the state we manually want to update
       // the meeting summary here.
       $scope.updateMeetingSummary();
+      $scope.$apply();
     };
     uiSliderConfig.stop = function() {
       $timeout(function() {
