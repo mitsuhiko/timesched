@@ -268,7 +268,6 @@ var timesched = angular
 
     $scope.toggleMarkWeekends = function() {
       $scope.markWeekends = !$scope.markWeekends;
-      $scope.saveState();
     };
 
     $scope.toggleClocks = function() {
@@ -476,8 +475,6 @@ var timesched = angular
         params.tz = buf.join(',');
       if ($scope.scheduleMeeting)
         params.range = $scope.timeRange[0] + ',' + $scope.timeRange[1];
-      if (!$scope.markWeekends)
-        params.weekends = '0';
       localSearchChange = true;
       putInStorage('lastTimezones', params.tz || '');
       $location.search(params);
@@ -664,12 +661,6 @@ var timesched = angular
         $scope.scheduleMeeting = true;
       } else {
         $scope.scheduleMeeting = false;
-      }
-
-      if (params.weekends == '0') {
-        $scope.markWeekends = false;
-      } else if (!params.weekends || params.weekends == '1') {
-        $scope.markWeekends = true;
       }
 
       if (initialSync && allZones.length === 0) {
