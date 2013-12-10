@@ -234,7 +234,8 @@ var timesched = angular
     uiSliderConfig.step = 15;
     uiSliderConfig.range = true;
     uiSliderConfig.slide = function(event, ui) {
-      $(ui.handle).parent().slider({step: event.metaKey ? 5 : 15});
+      var smallStep = event.metaKey || event.altKey || event.shiftKey;
+      $(ui.handle).parent().slider({step: smallStep ? 5 : 15});
       // because we're not saving the state we manually want to update
       // the meeting summary here.
       $scope.updateMeetingSummary();
