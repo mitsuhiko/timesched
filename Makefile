@@ -31,7 +31,7 @@ upload:
 	cp timesched.html _deploy/index.html
 	cp -R lib _deploy
 	cp -R static _deploy
-	rsync -a _deploy/ pocoo.org:/var/www/timesched.pocoo.org/
+	rsync -a _deploy/ flow.srv.pocoo.org:/srv/websites/timesched.pocoo.org/static
 	rm -rf _deploy
 
 .PHONY: compress download-timezone-info upload
