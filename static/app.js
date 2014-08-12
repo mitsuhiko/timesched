@@ -501,8 +501,8 @@ var timesched = angular
           lines.push('');
         lines.push(zone.timezoneName + '  [' + start.format('z; [UTC]ZZ') +
           (start.zone() != end.zone() ? '; timezone change' : '') + ']');
-        lines.push(start.format(fmt));
-        lines.push(end.format(fmt));
+        lines.push("Start: " + start.format(fmt));
+        lines.push("End: " + end.format(fmt));
       }
       return lines.join('\n');
     };
