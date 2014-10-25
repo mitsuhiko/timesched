@@ -735,7 +735,7 @@ var timesched = angular
         elm.typeahead({
           name: 'timezone',
           local: SELECTABLES,
-          limit: 6,
+          limit: 10,
           engine: {compile: function() {
             return {
               render: function(context) {

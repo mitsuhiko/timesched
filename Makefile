@@ -1,7 +1,7 @@
 all: compress
 
 compress: lib/generated/data.js
-	uglifyjs \
+	node_modules/uglify-js/bin/uglifyjs \
 		lib/jquery.js \
 		lib/jquery-ui.js \
 		lib/angular.js \
@@ -13,7 +13,7 @@ compress: lib/generated/data.js
 		lib/moment-timezone.js \
 		lib/typeahead.js \
 			-c > lib/generated/compressed.js
-	uglifyjs \
+	node_modules/uglify-js/bin/uglifyjs \
 		lib/generated/data.js \
 		-c > lib/generated/data-compressed.js
 

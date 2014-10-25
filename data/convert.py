@@ -181,6 +181,13 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
         record_selectable(key, name, name, tzname, common_tz=True)
 
     def _sort_key(x):
+        words = x['d'].split()
+        if len(words) == 1:
+            canonical_abbr = words[0].lower()
+        else:
+            canonical_abbr = ''.join(x[:1] for x in words).lower()
+        canonical = canonical_abbr in x['T'].split()
+
         city = x['sortinfo'].get('city')
         name = x['d'].lower()
         importance = 0
@@ -190,15 +197,15 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
             if city['is_capital']:
                 importance += 1
             importance += math.log(max(city['population'], 1)) / 50.0
-        return -importance, name
+        return not canonical, -importance, name
     selectables.sort(key=_sort_key)
     for selectable in selectables:
         selectable.pop('sortinfo', None)
 
-    timezone_data.pop('meta', None)
     return {
         'tzmap': reverse_timezone_mapping,
-        'timezones': timezone_data,
+        'timezones': timezone_data['zones'],
+        'timezone_links': timezone_data['links'],
         'selectables': selectables,
         'weekends': weekends,
         'countries': dict((k, v['name']) for k, v in countries.iteritems()),
@@ -208,6 +215,8 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
 def write_combined_data(data, f):
     f.write('moment.tz.add(%s);\n' %
             json.dumps(data['timezones']))
+    f.write('moment.tz.link(%s);\n' %
+            json.dumps(data['timezone_links']))
     f.write('timesched.setTimezoneData(%s);\n' % json.dumps({
         'tzmap': data['tzmap'],
         'selectables': data['selectables'],
