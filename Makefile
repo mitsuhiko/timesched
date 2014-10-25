@@ -18,7 +18,7 @@ compress: lib/generated/data.js
 		-c > lib/generated/data-compressed.js
 
 download-timezone-info:
-	wget https://raw.github.com/moment/moment-timezone/develop/moment-timezone.json -O data/timezones.json
+	wget https://raw.githubusercontent.com/moment/moment-timezone/develop/data/packed/latest.json -O data/timezones.json
 	wget http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml -O data/windows_zones.xml
 	wget http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml -O data/supplemental_data.xml
 

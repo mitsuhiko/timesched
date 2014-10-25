@@ -96,11 +96,13 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
     timezones_found = set()
 
     timezone_mapping = {}
-    for tz in chain(timezone_data['zones'],
-                    timezone_data['links']):
-        if tz in timezone_mapping:
-            continue
-        timezone_mapping[tz] = len(timezone_mapping)
+    for tzinfo in timezone_data['zones']:
+        tz = tzinfo.split('|')[0]
+        if tz not in timezone_mapping:
+            timezone_mapping[tz] = len(timezone_mapping)
+    for tzlink in timezone_data['links']:
+        target, tz = tzlink.split('|')
+        timezone_mapping[tz] = timezone_mapping[target]
     reverse_timezone_mapping = dict((v, k) for k, v in
                                     timezone_mapping.iteritems())
 
@@ -111,12 +113,9 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
         if tz in timezone_data['links']:
             tz = timezone_data['links'][tz]
 
-        zone = timezone_data['zones'][tz]
-        for zone_rule in zone:
-            tokens = zone_rule.split(None)
-            tmpl = tokens[2]
-            if '%s' not in tmpl:
-                rv += ' ' + tmpl
+        zone = timezone_data['zones'][timezone_mapping[tz]].split('|')
+        for abbr in zone[1].split(None):
+            rv += ' ' + abbr
 
         rv = rv.replace('/', ' ')
 
@@ -163,7 +162,7 @@ def combine_data(countries, cities, timezone_data, windows_zones, weekends):
                           sortinfo={'city': city})
         timezones_found.add(city['timezone'])
 
-    for name in timezone_data['meta']:
+    for name in timezone_mapping:
         if name in timezones_found or \
            not (name.lower().startswith('etc/') or not '/' in name):
             continue
