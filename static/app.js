@@ -497,8 +497,11 @@ var timesched = angular
         var zone = $scope.zones[i];
         var start = zone.getRangeStart($scope.timeRange);
         var end = zone.getRangeEnd($scope.timeRange);
-        if (i > 0)
-          lines.push('');
+        if (i == 0) {
+          lines.push('Meeting duration: ' +
+            moment.utc(end.diff(start)).format('HH:mm'));
+        }
+        lines.push('');
         lines.push(zone.timezoneName + '  [' + start.format('z; [UTC]ZZ') +
           (start.zone() != end.zone() ? '; timezone change' : '') + ']');
         lines.push(start.format(fmt));
